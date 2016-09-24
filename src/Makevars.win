@@ -1,0 +1,6 @@
+# set by configure
+GSL_CFLAGS = @GSL_CFLAGS@
+GSL_LIBS = @GSL_LIBS@
+# combine with standard arguments for R
+PKG_CPPFLAGS=-I$(LIB_GSL)/include -I../inst/include
+PKG_LIBS=-L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas
