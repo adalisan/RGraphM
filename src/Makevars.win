@@ -1,6 +1,33 @@
 # set by configure
-GSL_CFLAGS = @GSL_CFLAGS@
-GSL_LIBS = @GSL_LIBS@
+GSL_CFLAGS = -IC:/tools/gsl/include
+GSL_LIBS = -LC:/tools/gsl/lib -lgsl -lgslcblas
 # combine with standard arguments for R
-PKG_CPPFLAGS=-I$(LIB_GSL)/include -I../inst/include
-PKG_LIBS=-L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas
+
+PKG_CPPFLAGS = $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst -Wall -pedantic -pthread -fPIC -O2 -g
+
+GRAPHM_OBJ = $(addprefix ./obj/algorithm_ca.o ./obj/algorithm_path.o ./obj/algorithm_ext.o ./obj/algorithm_fsol.o  ./obj/algorithm_iden.o ./obj/algorithm_lp.o ./obj/algorithm.o ./obj/algorithm_path.o ./obj/algorithm_qcv.o ./obj/algorithm_rand.o ./obj/algorithm_rank.o ./obj/algorithm_umeyama.o ./obj/algorithm_unif.o ./obj/experiment.o ./obj/graph.o ./obj/hungarian.o  ./obj/rpc.o, graphm)
+
+
+PKG_LIBS =  $(GRAPHM_OBJ) $(GSL_LIBS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas
+
+CXX ?= g++
+CFLAGS = -I$(LIB_GSL)/include -I../inst/include  -I../inst -I../src/graphm-0.52 -Wno-deprecated -O3 -fPIC
+CXXFLAGS= -I$(LIB_GSL)/include -I../inst/include  -I../inst -I../src/graphm-0.52 -Wno-deprecated -O3 -fPIC
+LDFLAGS= -lgsl -lgslcblas
+SHVER = 1
+
+
+SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
+OBJECTS= $(SOURCES:.cpp=.o)
+
+
+all: recursive
+   cd graphm && $(MAKE)
+   $(CXX) $(CXXFLAGS) $(ALLOBJ) $(LDFLAGS)
+
+
+$(ALLOBJ): $(OBJECTS) $(GRAPHM_OBJ)
+
+#../inst/libcaf_main.a: $(OBJECTS_CAF)
+	#ar -rvs ../inst/libcaf_main.a $(OBJECTS_CAF)
+
