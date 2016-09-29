@@ -25,9 +25,8 @@ all: recursive
    cd graphm && $(MAKE)
    $(CXX) $(CXXFLAGS) $(ALLOBJ) $(LDFLAGS)
 
-
 $(ALLOBJ): $(OBJECTS) $(GRAPHM_OBJ)
 
 #../inst/libcaf_main.a: $(OBJECTS_CAF)
 	#ar -rvs ../inst/libcaf_main.a $(OBJECTS_CAF)
-
+recursive: true
