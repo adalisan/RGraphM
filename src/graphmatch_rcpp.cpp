@@ -16,7 +16,7 @@
 #include "graphm/algorithm.h"
 
 using namespace std;
-//using namespace Rcpp;
+using namespace Rcpp;
 
 // declare a dependency on the RcppGSL package; also activates plugin
 // (but not needed when ’LinkingTo: RcppGSL’ is used with a package)
