@@ -1,27 +1,30 @@
 # set by configure
-#GSL_CFLAGS = -IC:/tools/gsl/include
-#GSL_LIBS = -LC:/tools/gsl/lib -lgsl -lgslcblas
+#GSL_CFLAGS =
+#GSL_LIBS = 
 # combine with standard arguments for R
 RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
 #RCPPGSL_CFLAGS
 PKG_CPPFLAGS = $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst -Wall -pedantic -pthread -fPIC -O2 -g
 
 
-GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
+GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
 GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
-PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
+#PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
+PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
 CXX ?= g++
 SHVER= 1
 VPATH= ./graphm:./graphm-0.52
 
 
-SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp graphm/experiment.cpp hungarian.cpp
-OBJECTS= $(SOURCES:.cpp=.o) $(GRAPHM_OBJ_REL) rpc.o
+SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp 
+OBJECTS= $(SOURCES:.cpp=.o) $(GRAPHM_OBJ_REL) 
 
-all:  $(ALLFILES) ../inst/libgraphm.a
-	cd graphm && $(MAKE)
-	$(CXX) $(CXXFLAGS)   $(OBJECTS)  ../inst/libgraphm.a $(PKG_LIBS)
+#all: $(SHLIB) $(OBJECTS)
+$(SHLIB): $(OBJECTS)
+#all:  $(ALLFILES) ../inst/libgraphm.a
+#	cd graphm && $(MAKE)
+#	$(CXX) $(CXXFLAGS)   $(OBJECTS)  ../inst/libgraphm.a $(PKG_LIBS)
 
 ./experiment.o:   experiment.cpp experiment.h
 		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c experiment.cpp  -o ./experiment.o
