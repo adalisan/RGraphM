@@ -1,0 +1,6 @@
+#!/bin/sh
+rm src/Makevars
+rm src/*.o
+rm src/*.so
+rm src/graphm/*.o
+rm src/*.rds
