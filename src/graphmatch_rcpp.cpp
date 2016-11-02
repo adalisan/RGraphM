@@ -30,8 +30,25 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   graph graphm_obj_B(B);
   //graphm_obj_B.set_adjmatrix(B);
   experiment exp;
+  CharacterVector param_names = algorithm_params.names();
+  int param_count  = param_names.size();
+
+  for (int i=0; i < param_count; ++i) {
+  	Rcpp::String key = param_names[i];
+  	if (!(Rf_isNull(algorithm_params[key]))){
+  	  if ( Rf_isNumeric(algorithm_params[key]) && !Rf_isInteger(algorithm_params[key]) ) {
+  	 double value = as<double>( algorithm_params[key]);
+     exp.set_param(key,value);
+  	  } else if ( Rf_isInteger(algorithm_params[key]) ) {
+  	  	int value = as<int> ( algorithm_params[key]);
+  	  }  	  	else if ( Rf_isString( (algorithm_params[key]) )) {
+  	  	string value = as<string>( algorithm_params[key]);
+  	  	exp.set_param(key,value);
+  	  }
+  	}
+  }
   //exp.read_config(conc_params_string);
-  exp.run_experiment();
+  exp.run_experiment(graphm_obj_A,graphm_obj_B);
   return Rcpp::List();
 
 }

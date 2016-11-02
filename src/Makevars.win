@@ -1,15 +1,16 @@
 # set by configure
-GSL_CFLAGS = -IC:/tools/gsl/include
-#GSL_LIBS = -LC:/tools/gsl/lib -lgsl -lgslcblas
+#GSL_CFLAGS =
+#GSL_LIBS =
 # combine with standard arguments for R
-#RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
+RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
 #RCPPGSL_CFLAGS
 PKG_CPPFLAGS = $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst -Wall -pedantic -pthread -fPIC -O2 -g
 
 
-GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
+GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
 GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
-PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
+#PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
+PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
 CXX ?= g++
 SHVER= 1
@@ -17,45 +18,47 @@ VPATH= ./graphm:./graphm-0.52
 
 
 SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
-OBJECTS= $(SOURCES:.cpp=.o)
+OBJECTS= $(SOURCES:.cpp=.o) $(GRAPHM_OBJ_REL)
 
-all:  $(ALLFILES) ../inst/libgraphm.a
-	#cd graphm && $(MAKE)
-	$(CXX) $(CXXFLAGS)   $(OBJECTS)  ../inst/libgraphm.a $(PKG_LIBS)
+#all: $(SHLIB) $(OBJECTS)
+$(SHLIB): $(OBJECTS)
+#all:  $(ALLFILES) ../inst/libgraphm.a
+#	cd graphm && $(MAKE)
+#	$(CXX) $(CXXFLAGS)   $(OBJECTS)  ../inst/libgraphm.a $(PKG_LIBS)
 
 ./experiment.o:   experiment.cpp experiment.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c experiment.cpp  -o ./experiment.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c experiment.cpp  -o ./experiment.o
 ./rpc.o:   rpc.cpp rpc.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c rpc.cpp  -o ./rpc.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c rpc.cpp  -o ./rpc.o
 ./graph.o:   graph.cpp graph.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c graph.cpp  -o ./graph.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c graph.cpp  -o ./graph.o
 ./hungarian.o:   hungarian.cpp hungarian.h
-		cd graphm && $(CXX) $(LOC_CFLAGS)  -I$(LIB_GSL)/include -c hungarian.cpp  -o ./hungarian.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS)  -I$(LIB_GSL)/include -c hungarian.cpp  -o ./hungarian.o
 ./algorithm.o:   algorithm.cpp algorithm.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm.cpp  -o ./algorithm.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm.cpp  -o ./algorithm.o
 #graph matching algorithms
 ./algorithm_ca.o: algorithm_ca.cpp algorithm_ca.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_ca.cpp -o ./algorithm_ca.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_ca.cpp -o ./algorithm_ca.o
 ./algorithm_path.o: algorithm_path.cpp algorithm_path.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_path.cpp -o ./algorithm_path.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_path.cpp -o ./algorithm_path.o
 ./algorithm_ext.o:   algorithm_ext.cpp algorithm_ext.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_ext.cpp  -o ./algorithm_ext.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_ext.cpp  -o ./algorithm_ext.o
 ./algorithm_fsol.o:   algorithm_fsol.cpp algorithm_fsol.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_fsol.cpp  -o ./algorithm_fsol.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_fsol.cpp  -o ./algorithm_fsol.o
 ./algorithm_iden.o:   algorithm_iden.cpp algorithm_iden.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_iden.cpp  -o ./algorithm_iden.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_iden.cpp  -o ./algorithm_iden.o
 ./algorithm_lp.o:   algorithm_lp.cpp algorithm_lp.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_lp.cpp  -o ./algorithm_lp.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_lp.cpp  -o ./algorithm_lp.o
 ./algorithm_qcv.o:   algorithm_qcv.cpp algorithm_qcv.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_qcv.cpp  -o ./algorithm_qcv.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_qcv.cpp  -o ./algorithm_qcv.o
 ./algorithm_rand.o:   algorithm_rand.cpp algorithm_rand.h
-		cd graphm && $(CXX) $(LOC_CFLAGS)  -I$(LIB_GSL)/include -c algorithm_rand.cpp  -o ./algorithm_rand.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS)  -I$(LIB_GSL)/include -c algorithm_rand.cpp  -o ./algorithm_rand.o
 ./algorithm_rank.o:   algorithm_rank.cpp algorithm_rank.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_rank.cpp  -o ./algorithm_rank.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_rank.cpp  -o ./algorithm_rank.o
 ./algorithm_umeyama.o:   algorithm_umeyama.cpp algorithm_umeyama.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_umeyama.cpp  -o ./algorithm_umeyama.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_umeyama.cpp  -o ./algorithm_umeyama.o
 ./algorithm_unif.o:   algorithm_unif.cpp algorithm_unif.h
-		cd graphm && $(CXX) $(LOC_CFLAGS) -I$(LIB_GSL)/include -c algorithm_unif.cpp  -o ./algorithm_unif.o
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_unif.cpp  -o ./algorithm_unif.o
 
 ALLOBJ: $(OBJECTS) $(GRAPHM_OBJ)
 
