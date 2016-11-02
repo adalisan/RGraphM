@@ -48,7 +48,13 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	}
   }
   //exp.read_config(conc_params_string);
+
+	try {
   exp.run_experiment(graphm_obj_A,graphm_obj_B);
+
+	} catch(std::exception &ex) {
+		forward_exception_to_r(ex);
+	} catch(...) {
   return Rcpp::List();
 
 }
