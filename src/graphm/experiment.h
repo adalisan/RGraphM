@@ -38,7 +38,8 @@
 #include "algorithm_ca.h"
 #include "algorithm_ext.h"
 #include <strstream>
-
+#include <stdexcept>
+#include <exception>
 /**
 Experiment class. It implements all extern routines for graph matching experiments
 
@@ -57,6 +58,7 @@ public:
     void printout(std::string fname_out);
     void printout();
     algorithm* get_algorithm(std::string salgo);
+    gsl_matrix* get_P_result(int algo_index);
 protected:
     std::vector<match_result> v_mres;
     void synchronize(graph &g, graph &h,gsl_matrix** gm_ldh=NULL);

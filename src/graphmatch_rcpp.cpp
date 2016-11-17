@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdlib.h>
+#include <stdexcept>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_permutation.h>
 
@@ -25,9 +26,11 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, const Rcpp::List& algorithm_params){
   graph graphm_obj_A(A);
-  graph graph_test("");
+	//print("Read in matrix for graph A")
+
   //graphm_obj_A.set_adjmatrix(A);
   graph graphm_obj_B(B);
+  //print("Read in matrix for graph B")
   //graphm_obj_B.set_adjmatrix(B);
   experiment exp;
   CharacterVector param_names = algorithm_params.names();
@@ -49,13 +52,24 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   }
   //exp.read_config(conc_params_string);
 
-	try {
-  exp.run_experiment(graphm_obj_A,graphm_obj_B);
+ 	try {
+   exp.run_experiment(graphm_obj_A, graphm_obj_B);
+ 		gsl_matrix *tmp =  exp.get_P_result(0) ;
+    RcppGSL::Matrix P(tmp); // ((gsl_matrix *) exp.get_P_result(0) )	;
+ //const RcppGSL::matrix<double> P (gsl_matrix_
 
-	} catch(std::exception &ex) {
-		forward_exception_to_r(ex);
-	} catch(...) {
-  return Rcpp::List();
+ 	 	Rcpp::List  res = Rcpp::List::create(
+//   	Rcpp::Named("debugprint_file") = algorithm_params["debugprint_file"],
+ 	 	//);
+ 	 		//
+    Rcpp::Named("Pmat") = P );
+  P.free();
+ 	 return res;
+	} catch( std::exception &ex) {
+		Rf_error(ex.what());
+ 	} catch (...) {
+   return Rcpp::List();
+ 	}
 
 }
 

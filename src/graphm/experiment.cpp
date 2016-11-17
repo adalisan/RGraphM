@@ -63,14 +63,14 @@ void experiment::run_experiment(graph &g, graph &h)
 		v_salgo_init.push_back(stemp);
 	if (v_salgo_init.size()!=v_salgo_match.size())
 	{
-		throw std::exception("Error: algo and algo_init_sol do not have the same size\n");
+		throw std::runtime_error("Error: algo and algo_init_sol do not have the same size\n");
 
 	};
 
 	double dalpha_ldh=get_param_d("alpha_ldh");
 	if ((dalpha_ldh<0) ||(dalpha_ldh>1))
 	{
-		throw std::exception("Error:alpha_ldh should be between 0 and 1 \n");
+		throw std::runtime_error("Error:alpha_ldh should be between 0 and 1 \n");
 
 	};
 
@@ -180,6 +180,17 @@ void experiment::printout(std::string fname_out)
 	std::string sformat=get_param_s("exp_out_format");
 	printout(fname_out,sformat);
 }
+gsl_matrix* experiment::get_P_result(int algo_index){
+	if ( algo_index<v_mres.size() && algo_index>0 ){
+		if ( v_mres[algo_index].gm_P_exact != NULL){
+			return v_mres[algo_index].gm_P_exact;
+		} else{
+			return v_mres[algo_index].gm_P;
+		}
+	} else
+		return NULL;
+}
+
 void experiment::printout(std::string fname_out,std::string sformat)
 {
 
@@ -286,5 +297,5 @@ algorithm* experiment::get_algorithm(std::string salgo)
 
    if (salgo.compare("EXT")==0){ return new algorithm_NEW;};
 
-   throw std::exception("Error: graph matching algorithm is not selected");
+   throw std::runtime_error("Error: graph matching algorithm is not selected");
 }
