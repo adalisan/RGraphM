@@ -63,4 +63,5 @@ verbose_file="verbose_debug.txt"
 )
 print( algorithm_params)
  result <- run_graph_match(A, B, algorithm_params)
+ print(result$Pmat)
 }
