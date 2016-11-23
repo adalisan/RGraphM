@@ -59,6 +59,7 @@ public:
     void printout();
     algorithm* get_algorithm(std::string salgo);
     gsl_matrix* get_P_result(int algo_index);
+    int get_algo_len();
 protected:
     std::vector<match_result> v_mres;
     void synchronize(graph &g, graph &h,gsl_matrix** gm_ldh=NULL);
