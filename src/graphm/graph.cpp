@@ -22,6 +22,7 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_eigen.h>
 #include "hungarian.h"
+#include <stdexcept>
 //using namespace std;
 
 graph::graph(const gsl_matrix* _gm_A):rpc("")
@@ -77,7 +78,8 @@ case 'A':case 'a':
 	set_adjmatrix(gm_A_l);
 	gsl_matrix_free(gm_A_l);
 	};
-	if (ierror!=0){ printf("Error: graph adjacency matrix is not correctly defined \n"); exit(0);}
+	if (ierror!=0){ printf("Error: graph adjacency matrix is not correctly defined \n");
+		throw std::runtime_error("Error: graph adjacency matrix is not correctly defined \n");}
 	break;
  };
 return 1;

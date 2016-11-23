@@ -39,8 +39,10 @@ void experiment::run_experiment(graph &g, graph &h)
 	std::string sverbfile=get_param_s("verbose_file");
 	bool bverbose=(get_param_i("verbose_mode")==1);
 	std::ofstream fverbose;
-	if (sverbfile.compare("cout")==0)
-		gout=&std::cout;
+	if (sverbfile.compare("cout")==0){
+		fverbose.open("Rconsoleout.txt");
+		gout=&fverbose;
+	}
 	else
 	{
 		fverbose.open(sverbfile.c_str());
@@ -87,7 +89,8 @@ void experiment::run_experiment(graph &g, graph &h)
 		int ierror=gsl_matrix_fscanf(f,gm_ldh);
 		fclose(f);
 		gsl_set_error_handler(NULL);
-		if (ierror!=0){ printf("Error: C_matrix is not correctly defined \n"); exit(0);};
+		if (ierror!=0){ printf("Error: C_matrix is not correctly defined \n");
+			throw std::runtime_error("Error: C_matrix is not correctly defined \n");};
 		}
 	else
 	{
@@ -180,15 +183,22 @@ void experiment::printout(std::string fname_out)
 	std::string sformat=get_param_s("exp_out_format");
 	printout(fname_out,sformat);
 }
+
+int experiment::get_algo_len(){
+	return this->v_mres.size();
+}
+
+
 gsl_matrix* experiment::get_P_result(int algo_index){
-	if ( algo_index<v_mres.size() && algo_index>0 ){
-		if ( v_mres[algo_index].gm_P_exact != NULL){
-			return v_mres[algo_index].gm_P_exact;
-		} else{
-			return v_mres[algo_index].gm_P;
-		}
-	} else
+	if ( algo_index<this->v_mres.size() && algo_index>=0 ){
+//		if ( this->v_mres[algo_index].gm_P_exact != NULL){
+//			return this->v_mres[algo_index].gm_P_exact;
+//		} else{
+			return this->v_mres[algo_index].gm_P;
+//		}
+	} else {
 		return NULL;
+	}
 }
 
 void experiment::printout(std::string fname_out,std::string sformat)

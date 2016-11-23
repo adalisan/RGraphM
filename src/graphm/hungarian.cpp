@@ -23,14 +23,16 @@
 #include <stdlib.h>
 #include <math.h>
 #include <gsl/gsl_heapsort.h>
+#include <stdexcept>
 #include "hungarian.h"
+
 
 typedef struct {
   int num_rows;
   int num_cols;
   int** cost;
   int** assignment;
-  int* col_inc; 
+  int* col_inc;
 } hungarian_problem_t;
 int compare_doubles(const void *av,const void *bv)
 {
@@ -42,8 +44,8 @@ int compare_doubles(const void *av,const void *bv)
 }
 
 
-  
-#define HUNGARIAN_NOT_ASSIGNED 0 
+
+#define HUNGARIAN_NOT_ASSIGNED 0
 #define HUNGARIAN_ASSIGNED 1
 
 #define HUNGARIAN_MODE_MINIMIZE_COST   0
@@ -62,15 +64,15 @@ int hungarian_init(hungarian_problem_t* p, int** cost_matrix, int rows, int cols
   int i,j, org_cols, org_rows;
   int max_cost;
   max_cost = 0;
-  
+
   org_cols = cols;
   org_rows = rows;
 
-  /* is the number of cols  not equal to number of rows ? 
+  /* is the number of cols  not equal to number of rows ?
      if yes, expand with 0-cols / 0-cols */
   rows = hungarian_imax(cols, rows);
   cols = rows;
-  
+
   p->num_rows = rows;
   p->num_cols = cols;
 
@@ -101,9 +103,9 @@ int hungarian_init(hungarian_problem_t* p, int** cost_matrix, int rows, int cols
   else if (mode == HUNGARIAN_MODE_MINIMIZE_COST) {
     /* nothing to do */
   }
-  else 
+  else
     //mexPrintf("%s: unknown mode. Mode was set to HUNGARIAN_MODE_MINIMIZE_COST !\n");
-  
+
   return rows;
 }
 
@@ -164,14 +166,14 @@ void hungarian_solve(hungarian_problem_t* p)
     slack[j]=0;
   }
 
-  
+
 
   /* Begin subtract column minima in order to start with lots of zeroes 12 */
   //if (verbose)    //mexPrintf("Using heuristic\n");
   for (l=0;l<n;l++)
     {
       s=p->cost[0][l];
-      for (k=1;k<m;k++) 
+      for (k=1;k<m;k++)
 	if (p->cost[k][l]<s)
 	  s=p->cost[k][l];
       cost+=s;
@@ -217,7 +219,7 @@ for (i=0;i<p->num_rows;++i)
     for (j=0;j<p->num_cols;++j)
       p->assignment[i][j]=HUNGARIAN_NOT_ASSIGNED;
   /* End initial state 16 */
- 
+
   /* Begin Hungarian algorithm 18 */
   if (t==0)
     goto done;
@@ -262,7 +264,7 @@ for (i=0;i<p->num_rows;++i)
 	      /* End explore node q of the forest 19 */
 	      q++;
 	    }
- 
+
 	  /* Begin introduce a new zero into the matrix */
 	  s=INF;
 	  for (l=0;l<n;l++)
@@ -279,7 +281,7 @@ for (i=0;i<p->num_rows;++i)
 		    /* Begin look at a new zero 22 */
 		    k=slack_row[l];
 		   // if (verbose)
-		      //mexPrintf( 
+		      //mexPrintf(
 			     //"Decreasing uncovered elements by %d produces zero at //[%d,%d]\n",
 //			     s,k,l);
 		    if (row_mate[l]<0)
@@ -344,19 +346,22 @@ for (i=0;i<p->num_rows;++i)
   for (k=0;k<m;k++)
     for (l=0;l<n;l++)
       if (p->cost[k][l]<row_dec[k]-col_inc[l])
-	exit(0);
+	//exit(0);
+	  throw std::runtime_error("Error: problem with Hungarian algorithm solver: line 348 @ hungarian.cpp \n");
   for (k=0;k<m;k++)
     {
       l=col_mate[k];
       if (l<0 || p->cost[k][l]!=row_dec[k]-col_inc[l])
-	exit(0);
+      	throw std::runtime_error("Error: problem with Hungarian algorithm solver: line 353 @ hungarian.cpp \n");
+      // exit(0);
     }
   k=0;
   for (l=0;l<n;l++)
     if (col_inc[l])
       k++;
   if (k>m)
-    exit(0);
+   // exit(0);
+   throw std::runtime_error("Error: problem with Hungarian algorithm solver: line 361 @ hungarian.cpp \n");
   /* End doublecheck the solution 23 */
   /* End Hungarian algorithm 18 */
   for (l=0;l<n;++l)
@@ -400,18 +405,18 @@ gsl_matrix* gsl_matrix_hungarian(gsl_matrix* gm_C)
 }
 void gsl_matrix_hungarian(gsl_matrix* gm_C,gsl_matrix* gm_P,gsl_vector* gv_col_inc, gsl_permutation* gp_sol, int _bprev_init, gsl_matrix *gm_C_denied, bool bgreedy)
 {
-  
-  long dim, startdim, enddim, n1,n2;
+
+  long dim,  n1,n2;
   double *C;
   int i,j;
   int **m;
-  double *z;
+
   hungarian_problem_t p, *q;
   int matrix_size;
   double C_min=gsl_matrix_min(gm_C)-1;
   n1 = gm_C->size1;    /* first dimension of the cost matrix */
   n2 = gm_C->size2;    /* second dimension of the cost matrix */
-  C = gm_C->data; 
+  C = gm_C->data;
    //greedy solution
    if (bgreedy)
    {
@@ -426,7 +431,7 @@ void gsl_matrix_hungarian(gsl_matrix* gm_C,gsl_matrix* gm_P,gsl_vector* gv_col_i
 		ind=C_ind[l];
 		ind1=floor(ind/n1);
 		ind2=ind%n2;
-		
+
 		if (!bperm_fix_1[ind1] and !bperm_fix_2[ind2])
 		{
 			bperm_fix_1[ind1]=true; bperm_fix_2[ind2]=true;
@@ -437,23 +442,19 @@ void gsl_matrix_hungarian(gsl_matrix* gm_C,gsl_matrix* gm_P,gsl_vector* gv_col_i
 	delete[] bperm_fix_1;delete[] bperm_fix_2;
 	//because C is a transpose matrix
 	gsl_matrix_transpose(gm_P);
-	return;	
+	return;
    };
   double C_max=((gsl_matrix_max(gm_C)-C_min>1)?(gsl_matrix_max(gm_C)-C_min):1)*(n1>n2?n1:n2);
-  m = (int**)calloc(n1,sizeof(int*)); 
+  m = (int**)calloc(n1,sizeof(int*));
   for (i=0;i<n1;i++)
         {
-        	m[i] = (int*)calloc(n2,sizeof(int));  
+        	m[i] = (int*)calloc(n2,sizeof(int));
         	for (j=0;j<n2;j++)
             		m[i][j] = (int) (C[i+n1*j] - C_min);
 		if (gm_C_denied!=NULL)
 		for (j=0;j<n2;j++){
-			if (j==30)
-				int dbg=1;
 			bool bden=(gm_C_denied->data[n2*i+j]<1e-10);
-            		if (bden) m[i][j] =C_max;
-			else 
-				int dbg=1;
+   		if (bden) m[i][j] =C_max;
 			};
  	};
     //normalization: rows and columns
@@ -488,10 +489,10 @@ void gsl_matrix_hungarian(gsl_matrix* gm_C,gsl_matrix* gm_P,gsl_vector* gv_col_i
 			for (j=0;j<n2;j++) m[i][j]=mt[gsl_permutation_get(gp_sol,j)];
 		};
 		delete[] mt;
-		
+
 	};
 
-   
+
   /* initialize the hungarian_problem using the cost matrix*/
    matrix_size = hungarian_init(&p, m , n1,n2, HUNGARIAN_MODE_MINIMIZE_COST) ;
   /* solve the assignement problem */
