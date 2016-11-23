@@ -4,3 +4,6 @@ rm src/*.o
 rm src/*.so
 rm src/graphm/*.o
 rm src/*.rds
+rm inst/*.o
+rm inst/*.a
+rm inst/*.so

@@ -4,13 +4,21 @@
 \usage{
 run_graph_match(A,B,algorithm_params)
 }
+\arguments{
+\item{A}{ the adjacency matrix for first graph }
+\item{B}{ the adjacency matrix for second graph}
+\item{algorithm_params}{ A named list containing the parameters of the graph matching algorithm(s). The parameters can be integer,numeric or strings. See example and the source code for graphm package.}
+}
+\value{
+A named list containing
+\code{Pmat} The permutation matrix for matching graph \code{B} to \code{A}.
+}
 \description{
-Returns an \R \code{list} containing the character vector
-\code{c("foo", "bar")} and the numeric vector \code{c(0, 1)}.
+Runs the graph matching algorithm for graphs represented by \code{A} and \code{B}. Returns an \R \code{list} containing the permutation matrix \code{Pmat} and other computed variables.
 }
 \examples{
-A<-matrix( sample(c(0,1),100, replace = TRUE),10,10)
-perm <- sample.int(10)
+A<-matrix( sample(c(0,1),125, replace = TRUE,prob=c(0.75,0.25)),15,15)
+perm <- sample.int(15)
 B<-A [perm,perm]
 
 # parameters copied from test_simple example or graphm
@@ -55,11 +63,12 @@ blast_match_proj=0 ,
 exp_out_file="exp_out_file" ,
 exp_out_format="Parameters Compact Permutation",
 #other
-debugprint=0 ,
+debugprint=1 ,
 debugprint_file="debug.txt",
 verbose_mode=1 ,
 # verbose file may be a file or just a screen:cout
-verbose_file="verbose_debug.txt"
+verbose_file="verbose_debug.txt",
+graph_dot_print = 1
 )
 print( algorithm_params)
  result <- run_graph_match(A, B, algorithm_params)
