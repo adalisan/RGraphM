@@ -26,13 +26,24 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppGSL,Rcpp)]]
 // [[Rcpp::export]]
 Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, const Rcpp::List& algorithm_params){
+	//check if adj matrices are square
+	if (A.ncol()!= A.nrow()){
+		Rf_error("A is not a square matrix (eq. number of rows and columns)!");
+		return Rcpp::List();
+	}
+	if (B.ncol()!= B.nrow()){
+		Rf_error("B is not a square matrix (eq. number of rows and columns)!");
+		return Rcpp::List();
+	}
   graph graphm_obj_A(A);
 	//print("Read in matrix for graph A")
-
+	graphm_obj_A.printout("graphA.txt");
   //graphm_obj_A.set_adjmatrix(A);
   graph graphm_obj_B(B);
   //print("Read in matrix for graph B")
   //graphm_obj_B.set_adjmatrix(B);
+  graphm_obj_B.printout("graphB.txt");
+
   experiment exp;
   CharacterVector param_names = algorithm_params.names();
   int param_count  = param_names.size();
@@ -45,48 +56,86 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
      exp.set_param(key,value);
   	  } else if ( Rf_isInteger(algorithm_params[key]) ) {
   	  	int value = as<int> ( algorithm_params[key]);
+  	  	exp.set_param(key,value);
   	  }  	  	else if ( Rf_isString( (algorithm_params[key]) )) {
   	  	string value = as<string>( algorithm_params[key]);
   	  	exp.set_param(key,value);
   	  }
   	}
   }
+  if (!Rf_isNull(algorithm_params["algo"]) ) {
+  	string str(as<string>(algorithm_params["algo"]));
+  	string buf; // Have a buffer string
+  	stringstream ss(str); // Insert the string into a stream
+  	vector<string> algo_list; // Create vector to hold our words
+
+  	while (ss >> buf)
+  		algo_list.push_back(buf);
+
+  } else{
+  	algorithm_params["algo"] = "PATH";
+  	algorithm_params["algo_init_sol"] = "unif";
+
+  	exp.set_param("algo",std::string("PATH"));
+  	exp.set_param("algo_init_sol",std::string("unif"));
+
+  }
+
   //exp.read_config(conc_params_string);
-  Rcpp::NumericMatrix P(A.nrow(),A.ncol());
- 	try {
-   exp.run_experiment(graphm_obj_A, graphm_obj_B);
+  int P_nr = max(A.nrow(),B.ncol());
+  Rcpp::NumericMatrix P(P_nr);
+  try {
+  	exp.run_experiment(graphm_obj_A, graphm_obj_B);
 
-    RcppGSL::Matrix P_tmp ( exp.get_P_result(0) )	;
-    if ( P_tmp != NULL ) {
-    try{
-	    for (int j =0 ; j< P_tmp.nrow(); j++){
-	    	for (int k =0 ; k< P_tmp.ncol(); k++){
-	      P(j,k) = P_tmp(j,k);
-	      }
-	    }
-     }
-    catch (...){
-    	Rf_error("could not copy graphm result to Rcpp matrix");
-    	return Rcpp::List();
+  	int exp_count = exp.get_algo_len();
 
-    }
-    }
-    else{
-    	Rf_error("graphm returned NULL as matrix pointer");
-    }
-    	//const RcppGSL::matrix<double> P (gsl_matrix_
+  	exp.printout("test.txt");
 
- 	 	Rcpp::List  res = Rcpp::List::create(
-   	Rcpp::Named("debugprint_file") = algorithm_params["debugprint_file"],
-    Rcpp::Named("Pmat") = P
- 	 		);
-  P_tmp.free();
- 	 return res;
-	} catch( std::exception &ex) {
-		Rf_error(ex.what());
- 	} catch (...) {
-   return Rcpp::List();
- 	}
+  	std::vector<Rcpp::NumericMatrix> P_matrix_list ;
+
+  	for (int exp_i = 0;  exp_i < exp_count; exp_i++) {
+  		RcppGSL::Matrix P_tmp ( exp.get_P_result(exp_i) )	;
+  		if ( P_tmp != NULL ) {
+  			int mat_size = P_tmp.nrow()*P_tmp.ncol();
+  			try{
+  				for (int j =0 ; j< P_tmp.nrow(); j++){
+  					for (int k =0 ; k< P_tmp.ncol(); k++){
+  						P(j,k) = P_tmp(j,k);
+  					}
+
+
+  				}
+  			}
+  			catch (...){
+  				Rf_error("could not copy graphm result to Rcpp matrix");
+  				return Rcpp::List();
+
+  			}
+  		}
+  		else{
+  			Rf_error("graphm returned NULL as matrix pointer");
+  			return Rcpp::List();
+  		}
+
+
+  		P_matrix_list.push_back(P);
+
+  		P_tmp.free();
+
+  		}
+  	Rcpp::List  res = Rcpp::List::create(
+  			Rcpp::Named("debugprint_file") = algorithm_params["debugprint_file"],
+                                          Rcpp::Named("Pmat") = P_matrix_list,
+                                          Rcpp::Named("exp_count") = exp_count
+  		);
+
+  	return res;
+
+  } catch( std::exception &ex) {
+  	Rf_error(ex.what());
+  } catch (...) {
+  	return Rcpp::List();
+  }
 
 }
 
