@@ -37,7 +37,7 @@ void experiment::run_experiment(graph &g, graph &h)
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
 	std::string sverbfile=get_param_s("verbose_file");
-	bool bverbose=(get_param_i("verbose_mode")==1);
+	bool bverbose= 1; //(get_param_i("verbose_mode")==1);
 	std::ofstream fverbose;
 	if (sverbfile.compare("cout")==0){
 		fverbose.open("Rconsoleout.txt");
@@ -53,14 +53,14 @@ void experiment::run_experiment(graph &g, graph &h)
 	std::string sexp_type=get_param_s("exp_type");
 	std::string salgo_match=get_param_s("algo");
 	std::istrstream istr(salgo_match.c_str());
-	std::vector<std::string>v_salgo_match;
+	std::vector<std::string> v_salgo_match;
 	std::string stemp;
 	while (istr>>stemp)
 		v_salgo_match.push_back(stemp);
 	//used initialization algorithms
 	std::string salgo_init=get_param_s("algo_init_sol");
 	std::istrstream istrinit(salgo_init.c_str());
-	std::vector<std::string>v_salgo_init;
+	std::vector<std::string> v_salgo_init;
 	while (istrinit>>stemp)
 		v_salgo_init.push_back(stemp);
 	if (v_salgo_init.size()!=v_salgo_match.size())
@@ -78,11 +78,20 @@ void experiment::run_experiment(graph &g, graph &h)
 
 
 	if (get_param_i("graph_dot_print")==1){ g.printdot("g.dot");h.printdot("h.dot");};
+
+
+
+	int N1 =0;
+	N1 = g.get_adjmatrix()->size1;
+
+	int N2 =0;
+	N2 = h.get_adjmatrix()->size1;
+	char fname[4];
 	// Matrix of local similarities between graph vertices
-	std::string strfile=get_param_s("C_matrix");
-	int N1 =g.get_adjmatrix()->size1;
-	int N2 =h.get_adjmatrix()->size1;
  	gsl_matrix* gm_ldh=gsl_matrix_alloc(N1,N2);
+
+
+ 	std::string strfile=get_param_s("C_matrix");
 	FILE *f=fopen(strfile.c_str(),"r");
 	if (f!=NULL){
 		gsl_set_error_handler_off();
@@ -102,7 +111,7 @@ void experiment::run_experiment(graph &g, graph &h)
 	if (get_param_i("C_matrix_dist")==1)
 		gsl_matrix_scale(gm_ldh,-1);
 
-	if (bverbose) *gout<<"Graph synhronization"<<std::endl;
+	if (bverbose) *gout<<"Graph synchronization"<<std::endl;
 	synchronize(g,h,&gm_ldh);
 
 	//Cycle over all algoirthms
@@ -114,18 +123,24 @@ void experiment::run_experiment(graph &g, graph &h)
 			algo_i->set_ldhmatrix(gm_ldh);
 			match_result mres_i=algo_i->gmatch(g,h,NULL,NULL,dalpha_ldh);
 			delete algo_i;
+			char fname[5];
+			printout(itoa(a,fname,10));
 			//main algorithm
 			algorithm* algo=get_algorithm(v_salgo_match[a]);
 			algo->read_config(get_config_string());
 			algo->set_ldhmatrix(gm_ldh);
 			match_result mres_a=algo->gmatch(g,h,(mres_i.gm_P_exact!=NULL)?mres_i.gm_P_exact:mres_i.gm_P, NULL,dalpha_ldh);
+			if (bverbose) {
+				*gout<<"Finished matching with " <<itoa(a,fname,10) << "th algorithm of experiment" <<std::endl;
+			}
 			mres_a.vd_trace.clear();
 			mres_a.salgo=v_salgo_match[a];
 			v_mres.push_back(mres_a);
 			delete algo;
+			printout(itoa(a,fname,10));
 		};
 	gsl_matrix_free(gm_ldh);
-	printout();
+	//printout("after_experiment");
 }
 experiment::~experiment()
 {
@@ -190,14 +205,15 @@ int experiment::get_algo_len(){
 
 
 gsl_matrix* experiment::get_P_result(int algo_index){
-	if ( algo_index<this->v_mres.size() && algo_index>=0 ){
-//		if ( this->v_mres[algo_index].gm_P_exact != NULL){
-//			return this->v_mres[algo_index].gm_P_exact;
-//		} else{
-			return this->v_mres[algo_index].gm_P;
-//		}
+	if ((algo_index >= 0 ) && ( algo_index < this->v_mres.size()) ) {
+		if ( this->v_mres[algo_index].gm_P_exact != NULL){
+			return this->v_mres[algo_index].gm_P_exact;
+		} else{
+			return this->v_mres.at(algo_index).gm_P;
+		}
 	} else {
-		return NULL;
+		throw std::runtime_error("Out-of-bounds error for  experiment results vector\n ");
+
 	}
 }
 
@@ -248,6 +264,7 @@ void experiment::printout(std::string fname_out,std::string sformat)
 			fout<<v_mres.at(a).salgo<<" ";
 		fout.precision(2);
 		fout<<std::endl;
+		if (v_mres.size() >0 ){
 		for (int i=0;i<v_mres.at(0).gm_P->size1;i++)
 		{
 			for (int a=0;a<v_mres.size();a++)
@@ -261,6 +278,7 @@ void experiment::printout(std::string fname_out,std::string sformat)
 			};
 			fout<<std::endl;
 		};
+		}
 
 	};
 }

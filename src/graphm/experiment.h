@@ -40,6 +40,8 @@
 #include <strstream>
 #include <stdexcept>
 #include <exception>
+#include <cstdlib>
+#include <algorithm>
 /**
 Experiment class. It implements all extern routines for graph matching experiments
 

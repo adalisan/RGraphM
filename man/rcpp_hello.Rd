@@ -17,9 +17,10 @@ A named list containing
 Runs the graph matching algorithm for graphs represented by \code{A} and \code{B}. Returns an \R \code{list} containing the permutation matrix \code{Pmat} and other computed variables.
 }
 \examples{
-A<-matrix( sample(c(0,1),125, replace = TRUE,prob=c(0.75,0.25)),15,15)
+B<-matrix( sample(c(0,1),225, replace = TRUE,prob=c(0.75,0.25)),15,15)
+diag(A)<- 1
 perm <- sample.int(15)
-B<-A [perm,perm]
+A<-B [perm,perm]
 
 # parameters copied from test_simple example or graphm
 algorithm_params<-list(
@@ -27,14 +28,15 @@ algorithm_params<-list(
 # *******************ALGORITHMS********************************
 # used algorithms and what should be used as
 #initial solution in corresponding algorithms
-algo="PATH",
-algo_init_sol="unif",
+algo="I QCV PATH",
+algo_init_sol="unif unif unif",
 solution_file="solution_im.txt",
 # coeficient of linear combination between
 # (1-alpha_ldh)*||graph_1-P*graph_2*P^T||^2_F +alpha_ldh*C_matrix
 alpha_ldh=0 ,
 cdesc_matrix="A" ,
 cscore_matrix="A" ,
+#C_matrix = "none",
 # **************PARAMETERS SECTION*****************************
 hungarian_max=10000 ,
 algo_fw_xeps=0.01 ,
@@ -73,4 +75,20 @@ graph_dot_print = 1
 print( algorithm_params)
  result <- run_graph_match(A, B, algorithm_params)
  print(result$Pmat)
+
+
+
+
+ algorithm_params["algo"]<- "I U RANK QCV rand PATH"
+ algorithm_params["algo_init_sol"] <- "unif unif unif unif unif unif"
+ algorithm_params["alpha_ldh"] <- 0.44
+ anotherresult <- run_graph_match(a,b, algorithm_params)
+
+C<-matrix( runif(	min = 0, max = 1,n= 225),15,15)
+diag(C)<- 1
+B <- C*B
+perm <- sample.int(15)
+A<-B [perm,perm]
+weightedmatrixresult <- run_graph_match(A,B, algorithm_params)
+
 }

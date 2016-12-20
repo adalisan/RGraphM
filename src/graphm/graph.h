@@ -50,6 +50,7 @@ public:
     int load_graph(std::string fgraph,char ftype='A',char cformat='D',std::string fvertexlst_name="");
     //adjacency matrix control
     const gsl_matrix*  get_adjmatrix(){return gm_A;};
+
     int set_adjmatrix(const gsl_matrix* _gm_A);
     gsl_matrix* get_descmatrix(char dmt);
     int printout(std::string fname_out);
