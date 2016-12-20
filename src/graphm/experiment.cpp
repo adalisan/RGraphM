@@ -25,6 +25,7 @@ void experiment::run_experiment(){
 	graph h(get_config());
 	char cformat1='D',cformat2='D';
 	bool bverbose=(get_param_i("verbose_mode")==1);
+	std::string sverbfile=get_param_s("verbose_file");
 	std::ofstream fverbose;
 	if (sverbfile.compare("cout")==0){
 		fverbose.open("Rconsoleout.txt");
@@ -38,8 +39,8 @@ void experiment::run_experiment(){
 	if (bverbose) *gout<<"Data loading"<<std::endl;
 	g.load_graph(get_param_s("graph_1"),'A',cformat1);
 	h.load_graph(get_param_s("graph_2"),'A',cformat2);
-	gout->close();
-        this->run_experiment(g,h);
+	fverbose.close();
+  this->run_experiment(g,h);
 }
 
 void experiment::run_experiment(graph &g, graph &h)
@@ -66,6 +67,7 @@ void experiment::run_experiment(graph &g, graph &h)
 	std::istrstream istr(salgo_match.c_str());
 	std::vector<std::string> v_salgo_match;
 	std::string stemp;
+	std::stringstream counter;
 	while (istr>>stemp)
 		v_salgo_match.push_back(stemp);
 	//used initialization algorithms
@@ -135,29 +137,32 @@ void experiment::run_experiment(graph &g, graph &h)
 			match_result mres_i=algo_i->gmatch(g,h,NULL,NULL,dalpha_ldh);
 			delete algo_i;
 			char fname[5];
-			printout(itoa(a,fname,10));
+			counter << a ;
+			printout(counter.str());
 			//main algorithm
 			algorithm* algo=get_algorithm(v_salgo_match[a]);
 			algo->read_config(get_config_string());
 			algo->set_ldhmatrix(gm_ldh);
-			match_result mres_a=algo->gmatch(g,h,(mres_i.gm_P_exact!=NULL)?mres_i.gm_P_exact:mres_i.gm_P, NULL,dalpha_ldh);
+			match_result mres_a = algo->gmatch(g,h,(mres_i.gm_P_exact!=NULL)?mres_i.gm_P_exact:mres_i.gm_P, NULL,dalpha_ldh);
 			if (bverbose) {
-				*gout<<"Finished matching with " <<itoa(a,fname,10) << "th algorithm of experiment" <<std::endl;
+				*gout<<"Finished matching with " << a << "th algorithm of experiment" <<std::endl;
 			}
 			mres_a.vd_trace.clear();
 			mres_a.salgo=v_salgo_match[a];
 			v_mres.push_back(mres_a);
 			delete algo;
-			printout(itoa(a,fname,10));
+			printout(counter.str());
 		};
 	gsl_matrix_free(gm_ldh);
 	if (sverbfile.compare("cout")==0){
-		gout->close();
+		if ( fverbose.is_open() )
+		fverbose.close();
 		
 		
 	}
 	else
-	{ gout->close();
+	{ if (fverbose.is_open() )
+		fverbose.close();
 	};
 	//printout("after_experiment");
 }
