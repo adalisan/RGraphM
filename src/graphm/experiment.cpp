@@ -25,10 +25,21 @@ void experiment::run_experiment(){
 	graph h(get_config());
 	char cformat1='D',cformat2='D';
 	bool bverbose=(get_param_i("verbose_mode")==1);
+	std::ofstream fverbose;
+	if (sverbfile.compare("cout")==0){
+		fverbose.open("Rconsoleout.txt");
+		gout=&fverbose;
+	}
+	else
+	{
+		fverbose.open(sverbfile.c_str());
+		gout=&fverbose;
+	};
 	if (bverbose) *gout<<"Data loading"<<std::endl;
 	g.load_graph(get_param_s("graph_1"),'A',cformat1);
 	h.load_graph(get_param_s("graph_2"),'A',cformat2);
-  this->run_experiment(g,h);
+	gout->close();
+        this->run_experiment(g,h);
 }
 
 void experiment::run_experiment(graph &g, graph &h)
@@ -140,6 +151,14 @@ void experiment::run_experiment(graph &g, graph &h)
 			printout(itoa(a,fname,10));
 		};
 	gsl_matrix_free(gm_ldh);
+	if (sverbfile.compare("cout")==0){
+		gout->close();
+		
+		
+	}
+	else
+	{ gout->close();
+	};
 	//printout("after_experiment");
 }
 experiment::~experiment()
