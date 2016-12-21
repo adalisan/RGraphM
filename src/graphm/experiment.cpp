@@ -60,6 +60,10 @@ void experiment::run_experiment(graph &g, graph &h)
 		fverbose.open(sverbfile.c_str());
 		gout=&fverbose;
 	};
+	g.printout("graphm_exp_graphA.txt");
+
+
+	h.printout("graphm_exp_graphB.txt");
 
 	//used algorithms
 	std::string sexp_type=get_param_s("exp_type");
@@ -139,6 +143,14 @@ void experiment::run_experiment(graph &g, graph &h)
 			char fname[5];
 			counter << a ;
 			printout(counter.str());
+      FILE *matrix_out = fopen( "gm_P_init.txt","w");
+      if (mres_i.gm_P != NULL)
+			gsl_matrix_fprintf(matrix_out, mres_i.gm_P,"%g");
+			fclose(matrix_out);
+			matrix_out = fopen( "gm_P_exact_init.txt","w");
+			if (mres_i.gm_P_exact != NULL)
+			gsl_matrix_fprintf(matrix_out,mres_i.gm_P_exact,"%g" );
+			fclose(matrix_out);
 			//main algorithm
 			algorithm* algo=get_algorithm(v_salgo_match[a]);
 			algo->read_config(get_config_string());
@@ -147,6 +159,15 @@ void experiment::run_experiment(graph &g, graph &h)
 			if (bverbose) {
 				*gout<<"Finished matching with " << a << "th algorithm of experiment" <<std::endl;
 			}
+			matrix_out = fopen("gm_P_main.txt","w");
+			if (mres_a.gm_P != NULL)
+			gsl_matrix_fprintf(matrix_out,mres_a.gm_P, "%g");
+			fclose(matrix_out);
+
+			matrix_out = fopen("gm_P_exact_main.txt","w");
+			if (mres_a.gm_P_exact != NULL)
+			gsl_matrix_fprintf(matrix_out,mres_a.gm_P_exact, "%g" );
+			fclose(matrix_out);
 			mres_a.vd_trace.clear();
 			mres_a.salgo=v_salgo_match[a];
 			v_mres.push_back(mres_a);
@@ -157,8 +178,8 @@ void experiment::run_experiment(graph &g, graph &h)
 	if (sverbfile.compare("cout")==0){
 		if ( fverbose.is_open() )
 		fverbose.close();
-		
-		
+
+
 	}
 	else
 	{ if (fverbose.is_open() )

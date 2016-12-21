@@ -43,6 +43,7 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   //print("Read in matrix for graph B")
   //graphm_obj_B.set_adjmatrix(B);
   graphm_obj_B.printout("graphB.txt");
+  ofstream debug_out("gm_rcpp_debug.txt", ofstream::out);
 
   experiment exp;
   CharacterVector param_names = algorithm_params.names();
@@ -117,13 +118,16 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
    				Rf_error("0 sized P_tmp: Permutation matrix");
    				return Rcpp::List();
    			}
+
    			try{
    				for (int j =0 ; j< P_tmp.nrow(); j++){
    					for (int k =0 ; k< P_tmp.ncol(); k++){
    						P(j,k) = P_tmp(j,k);
+   						debug_out<<P_tmp(j,k)<<std::endl;
    					}
 
    				}
+   				Rf_PrintValue(P);
    			}
    			catch (...){
    				Rf_error("could not copy graphm result to Rcpp matrix");
@@ -146,12 +150,17 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
                                            Rcpp::Named("Pmat") = P_matrix_list,
                                            Rcpp::Named("exp_count") = exp_count
    		);
-
+   	if (debug_out.is_open())
+   		debug_out.close();
    	return res;
 
   } catch( std::exception &ex) {
+  	if (debug_out.is_open())
+  		debug_out.close();
   	Rf_error(ex.what());
   } catch (...) {
+  	if (debug_out.is_open())
+  		debug_out.close();
   	return Rcpp::List();
   }
 
