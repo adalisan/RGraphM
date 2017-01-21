@@ -2,6 +2,7 @@
 rm src/Makevars
 rm src/*.o
 rm src/*.so
+rm src/graphm/graphm
 rm src/graphm/*.o
 rm src/*.rds
 rm inst/*.o
