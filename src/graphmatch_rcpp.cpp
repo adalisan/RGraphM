@@ -68,10 +68,10 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
      //exp.printout(as<string>( tmp),"Parameters");
 
 
-     Rcpp::Rcout << " \n ";
+     debug_out << " \n ";
   	  	for( int i=0; i < tmp_str.length(); i++ ){
-  	  	Rcpp::Rcout << "i is: " << i << ", the element value is: " << tmp_str[i];
-  	  	Rcpp::Rcout << "\n";
+  	  		debug_out << "i is: " << i << ", the element value is: " << tmp_str[i];
+  	  		debug_out << "\n";
   	  	}
 
   	  	if ( tmp_str.size() == 1){
@@ -85,11 +85,12 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	}
   }
   int expected_result_count=0;
+  vector<string> algo_list;
   if (!Rf_isNull(algorithm_params["algo"]) ) {
   	string str(as<string>(algorithm_params["algo"]));
   	string buf; // Have a buffer string
   	stringstream ss(str); // Insert the string into a stream
-  	vector<string> algo_list; // Create vector to hold our words
+  	; // Create vector to hold our words
 
   	while (ss >> buf)
   		algo_list.push_back(buf);
@@ -103,24 +104,31 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	exp.set_param("algo",std::string("I"));
   	exp.set_param("algo_init_sol",std::string("unif"));
   	expected_result_count = 1;
+  	algo_list.push_back("I");
   }
+  Rcpp:Rcout << "Running Graph matching algorithms with following algorithms\n";
+  for (vector<string>::iterator algo_it = algo_list.begin() ; algo_it != algo_list.end(); algo_it++)
+  	Rcpp::Rcout << *algo_it <<"\n";
 
   //exp.read_config(conc_params_string);
-  exp.printout("before_Exp.txt","Parameters");
+  //exp.printout("before_Exp.txt","Parameters");
   int P_nr = max(A.nrow(),B.ncol());
-  Rcpp::NumericMatrix P(P_nr);
+
   std::vector<Rcpp::NumericMatrix> P_matrix_list ;
+  std::vector<Rcpp::NumericVector> P_vector_list ;
   try {
 
   	exp.run_experiment(graphm_obj_A, graphm_obj_B);
 
   	int exp_count = exp.get_algo_len();
 
-  	exp.printout("experiment ran.txt");
+  	//exp.printout("experiment ran.txt");
 
-    Rf_warning("exp count is %d",exp_count);
+    //Rf_warning("exp count is %d",exp_count);
 
    	for (int exp_i = 0;  exp_i < exp_count; exp_i++) {
+   		Rcpp::NumericMatrix P(P_nr);
+   		Rcpp::NumericVector Pv_tmp(P_nr);
    		try{
 
    		exp.get_P_result(exp_i);
@@ -131,6 +139,7 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
    		//RcppGSL::Matrix P_tmp (A.nrow(),B.ncol())	;
 
    		RcppGSL::Matrix P_tmp ( exp.get_P_result(exp_i) )	;
+
    		if ( P_tmp != NULL ) {
    			int mat_size = P_tmp.nrow();
    			mat_size *= P_tmp.ncol();
@@ -143,11 +152,14 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
    				for (int j =0 ; j< P_tmp.nrow(); j++){
    					for (int k =0 ; k< P_tmp.ncol(); k++){
    						P(j,k) = P_tmp(j,k);
-   						debug_out<<P_tmp(j,k)<<std::endl;
+   						if (P(j,k)==1) {
+   							Pv_tmp[j]=k+1;
+   						}
+   						//debug_out<<P_tmp(j,k)<<std::endl;
    					}
 
    				}
-   				Rf_PrintValue(P);
+   				//Rf_PrintValue(P);
    			}
    			catch (...){
    				Rf_error("could not copy graphm result to Rcpp matrix");
@@ -161,14 +173,17 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   //
   //
    		P_matrix_list.push_back(P);
+   		P_vector_list.push_back(Pv_tmp);
 
    		P_tmp.free();
 
    		}
    	Rcpp::List  res = Rcpp::List::create(
    			Rcpp::Named("debugprint_file") = algorithm_params["debugprint_file"],
+                                           Rcpp::Named("algo_names") = algo_list,
                                            Rcpp::Named("Pmat") = P_matrix_list,
-                                           Rcpp::Named("exp_count") = exp_count
+                                           Rcpp::Named("exp_count") = exp_count,
+                                           Rcpp::Named("Pvec") = P_vector_list
    		);
    	if (debug_out.is_open())
    		debug_out.close();
