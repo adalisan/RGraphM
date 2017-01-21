@@ -18,9 +18,11 @@ Runs the graph matching algorithm for graphs represented by \code{A} and \code{B
 }
 \examples{
 B<-matrix( sample(c(0,1),225, replace = TRUE,prob=c(0.75,0.25)),15,15)
-diag(A)<- 1
+diag(B)<- 1
 perm <- sample.int(15)
-A<-B [perm,perm]
+B<-(B+t(B))/2
+B[B>0.1] <- 1
+A<-B [perm,][,perm]
 
 # parameters copied from test_simple example or graphm
 algorithm_params<-list(
@@ -36,7 +38,7 @@ solution_file="solution_im.txt",
 alpha_ldh=0 ,
 cdesc_matrix="A" ,
 cscore_matrix="A" ,
-#C_matrix = "none",
+C_matrix = "none",
 # **************PARAMETERS SECTION*****************************
 hungarian_max=10000 ,
 algo_fw_xeps=0.01 ,
