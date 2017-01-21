@@ -58,9 +58,29 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	  } else if ( Rf_isInteger(algorithm_params[key]) ) {
   	  	int value = as<int> ( algorithm_params[key]);
   	  	exp.set_param(key,value);
-  	  }  	  	else if ( Rf_isString( (algorithm_params[key]) )) {
-  	  	string value = as<string>( algorithm_params[key]);
+  	  } else if ( Rf_isString( (algorithm_params[key]) )) {
+
+  	  	string tmp_str(as<string> (algorithm_params[key]));
+
+
+  	  	//const char *tmp_cstr = tmp.get_cstring();
+
+     //exp.printout(as<string>( tmp),"Parameters");
+
+
+     Rcpp::Rcout << " \n ";
+  	  	for( int i=0; i < tmp_str.length(); i++ ){
+  	  	Rcpp::Rcout << "i is: " << i << ", the element value is: " << tmp_str[i];
+  	  	Rcpp::Rcout << "\n";
+  	  	}
+
+  	  	if ( tmp_str.size() == 1){
+  	  	char value = tmp_str[0];
   	  	exp.set_param(key,value);
+  	  	}	else {
+  	  		//string value = as<string>( algorithm_params[key]);
+  	  		exp.set_param(key,tmp_str);
+  	  	}
   	  }
   	}
   }
@@ -80,9 +100,9 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
     //algorithm_params["algo"] = "PATH";
   	//algorithm_params["algo_init_sol"] = "unif";
 
-  	exp.set_param("algo",std::string("PATH"));
+  	exp.set_param("algo",std::string("I"));
   	exp.set_param("algo_init_sol",std::string("unif"));
- // 	expected_result_count = 1;
+  	expected_result_count = 1;
   }
 
   //exp.read_config(conc_params_string);
