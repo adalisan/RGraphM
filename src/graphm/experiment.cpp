@@ -43,13 +43,18 @@ void experiment::run_experiment(){
   this->run_experiment(g,h);
 }
 
+void experiment::run_sgm_experiment(graph &g, graph &h,  int n_seeds){
+	this->set_param("do_sgm",1);
+	this->set_param("number_of_seeds",n_seeds);
+	this->run_experiment(g,h);
+}
 void experiment::run_experiment(graph &g, graph &h)
 {
 	parameter pdebug = get_param("debugprint");
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
 	std::string sverbfile=get_param_s("verbose_file");
-	bool bverbose= 1; //(get_param_i("verbose_mode")==1);
+	bool bverbose= (get_param_i("verbose_mode")==1);
 	std::ofstream fverbose;
 	if (sverbfile.compare("cout")==0){
 		fverbose.open("Rconsoleout.txt");
@@ -135,39 +140,92 @@ void experiment::run_experiment(graph &g, graph &h)
 	for (int a=0;a<v_salgo_match.size();a++)
 		{
 			//initialization
+			match_result mres_i;
+		  int m = 0;
+
+
+
+			int do_sgm = get_param_i("do_sgm");
+			if  (do_sgm==1){
+				if (v_salgo_init[a]=="PATH")
+					v_salgo_init[a] = "sPATH";
+				if (v_salgo_init[a]=="FAQ" )
+					v_salgo_init[a] = "sFAQ";
+				m = get_param_i("number_of_seeds");
+
+			}
 			algorithm* algo_i=get_algorithm(v_salgo_init[a]);
 			algo_i->read_config(get_config_string());
 			algo_i->set_ldhmatrix(gm_ldh);
-			match_result mres_i=algo_i->gmatch(g,h,NULL,NULL,dalpha_ldh);
+
+			mres_i = algo_i->gmatch(g,h,NULL,NULL,dalpha_ldh);
+
 			delete algo_i;
 			char fname[5];
-			counter << a ;
-			printout(counter.str());
-      FILE *matrix_out = fopen( "gm_P_init.txt","w");
-      if (mres_i.gm_P != NULL)
-			gsl_matrix_fprintf(matrix_out, mres_i.gm_P,"%g");
-			fclose(matrix_out);
-			matrix_out = fopen( "gm_P_exact_init.txt","w");
-			if (mres_i.gm_P_exact != NULL)
-			gsl_matrix_fprintf(matrix_out,mres_i.gm_P_exact,"%g" );
-			fclose(matrix_out);
+
+			if (bverbose) {
+      	FILE *matrix_out = fopen( "gm_P_init.txt","w");
+
+      	if (mres_i.gm_P != NULL)
+					gsl_matrix_fprintf(matrix_out, mres_i.gm_P,"%g");
+      	fclose(matrix_out);
+			  matrix_out = fopen( "gm_P_exact_init.txt","w");
+				if (mres_i.gm_P_exact != NULL)
+					gsl_matrix_fprintf(matrix_out,mres_i.gm_P_exact,"%g" );
+				fclose(matrix_out);
+			}
 			//main algorithm
+
 			algorithm* algo=get_algorithm(v_salgo_match[a]);
+
 			algo->read_config(get_config_string());
+			if (bverbose) {
+				FILE *matrix_out = fopen( "bp3.txt","w");
+				fprintf(matrix_out,"fin" );
+				fclose(matrix_out);
+			}
+
 			algo->set_ldhmatrix(gm_ldh);
-			match_result mres_a = algo->gmatch(g,h,(mres_i.gm_P_exact!=NULL)?mres_i.gm_P_exact:mres_i.gm_P, NULL,dalpha_ldh);
+
+			if (bverbose) {
+
+				FILE *matrix_out = fopen( "bp4.txt","w");
+				fprintf(matrix_out,"fin" );
+				fclose(matrix_out);
+			}
+
+			match_result mres_a;
+
+			if  (do_sgm==1){
+				if (v_salgo_match[a]=="PATH")
+					v_salgo_match[a] = "sPATH";
+				if (v_salgo_match[a]=="FAQ" )
+					v_salgo_match[a] = "sFAQ";
+				m = get_param_i("number_of_seeds");
+
+			}
+
+
+
+				mres_a = algo->gmatch(g,h,(mres_i.gm_P_exact!=NULL)?mres_i.gm_P_exact:mres_i.gm_P, NULL,dalpha_ldh);
+
+
+
 			if (bverbose) {
 				*gout<<"Finished matching with " << a << "th algorithm of experiment" <<std::endl;
 			}
-			matrix_out = fopen("gm_P_main.txt","w");
+
+
+			if (bverbose) {
+				FILE *matrix_out = fopen("gm_P_main.txt","w");
 			if (mres_a.gm_P != NULL)
 			gsl_matrix_fprintf(matrix_out,mres_a.gm_P, "%g");
 			fclose(matrix_out);
-
 			matrix_out = fopen("gm_P_exact_main.txt","w");
 			if (mres_a.gm_P_exact != NULL)
-			gsl_matrix_fprintf(matrix_out,mres_a.gm_P_exact, "%g" );
+				gsl_matrix_fprintf(matrix_out,mres_a.gm_P_exact, "%g" );
 			fclose(matrix_out);
+			}
 			mres_a.vd_trace.clear();
 			mres_a.salgo=v_salgo_match[a];
 			v_mres.push_back(mres_a);
@@ -178,8 +236,6 @@ void experiment::run_experiment(graph &g, graph &h)
 	if (sverbfile.compare("cout")==0){
 		if ( fverbose.is_open() )
 		fverbose.close();
-
-
 	}
 	else
 	{ if (fverbose.is_open() )
@@ -251,11 +307,11 @@ int experiment::get_algo_len(){
 
 gsl_matrix* experiment::get_P_result(int algo_index){
 	if ((algo_index >= 0 ) && ( algo_index < this->v_mres.size()) ) {
-		if ( this->v_mres[algo_index].gm_P_exact != NULL){
-			return this->v_mres[algo_index].gm_P_exact;
-		} else{
+	//	if ( this->v_mres[algo_index].gm_P_exact != NULL){
+	//		return this->v_mres[algo_index].gm_P_exact;
+//		} else{
 			return this->v_mres.at(algo_index).gm_P;
-		}
+//		}
 	} else {
 		throw std::runtime_error("Out-of-bounds error for  experiment results vector\n ");
 
@@ -369,6 +425,7 @@ algorithm* experiment::get_algorithm(std::string salgo)
    if (salgo.compare("GA")==0){ return new algorithm_ca;};
 
    if (salgo.compare("EXT")==0){ return new algorithm_NEW;};
+   if (salgo.compare("sPATH")==0){ return (algorithm*)(new sgm_algorithm_spath);};
 
    throw std::runtime_error("Error: graph matching algorithm is not selected");
 }

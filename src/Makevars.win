@@ -7,7 +7,7 @@ RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
 PKG_CPPFLAGS = $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst -Wall -Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare  -pedantic -pthread -fPIC -O2 -g
 
 
-GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
+GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./sgm_algorithm.o ./sgm_algorithm_spath.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
 GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
 #PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
@@ -36,6 +36,9 @@ $(SHLIB): $(OBJECTS)
 		cd graphm && $(CXX) $(PKG_CPPFLAGS)  -I$(LIB_GSL)/include -c hungarian.cpp  -o ./hungarian.o
 ./algorithm.o:   algorithm.cpp algorithm.h
 		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm.cpp  -o ./algorithm.o
+./sgm_algorithm.o:   sgm_algorithm.cpp sgm_algorithm.h
+		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c sgm_algorithm.cpp  -o ./sgm_algorithm.o
+
 #graph matching algorithms
 ./algorithm_ca.o: algorithm_ca.cpp algorithm_ca.h
 		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_ca.cpp -o ./algorithm_ca.o
@@ -59,6 +62,9 @@ $(SHLIB): $(OBJECTS)
 		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_umeyama.cpp  -o ./algorithm_umeyama.o
 ./algorithm_unif.o:   algorithm_unif.cpp algorithm_unif.h
 		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_unif.cpp  -o ./algorithm_unif.o
+
+./sgm_algorithm_spath.o: sgm_algorithm_spath.cpp sgm_algorithm_spath.h
+		$(CXX) $(CFLAGS) -c sgm_algorithm_spath.cpp -o ./sgm_algorithm_spath.o
 
 ALLOBJ: $(OBJECTS) $(GRAPHM_OBJ)
 

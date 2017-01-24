@@ -2,8 +2,8 @@ CXX ?= g++
 CFLAGS = -Wno-deprecated -O3 -fPIC @GSL_CFLAGS@/gsl
 #LDFLAGS= -lgsl -lgslcblas
 SHVER = 1
-all: ./bin/graphm 
-./bin/graphm: ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o main.cpp
+all: ./bin/graphm
+./bin/graphm: ./sgm_algorithm_spath.o ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./sgm_algorithm.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o main.cpp
 	$(CXX) $(CFLAGS)  main.cpp ./*o $(LDFLAGS) -o ./bin/graphm @GSL_LIBS@
 #interface classes
 ./experiment.o:   experiment.cpp experiment.h
@@ -16,6 +16,9 @@ all: ./bin/graphm
 		$(CXX) $(CFLAGS) -c hungarian.cpp  -o ./hungarian.o
 ./algorithm.o:   algorithm.cpp algorithm.h
 		$(CXX) $(CFLAGS) -c algorithm.cpp  -o ./algorithm.o
+./sgm_algorithm.o:   sgm_algorithm.cpp sgm_algorithm.h
+		$(CXX) $(CFLAGS) -c sgm_algorithm.cpp  -o ./sgm_algorithm.o
+
 #graph matching algorithms
 ./algorithm_ca.o: algorithm_ca.cpp algorithm_ca.h
 		$(CXX) $(CFLAGS) -c algorithm_ca.cpp -o ./algorithm_ca.o
@@ -39,6 +42,9 @@ all: ./bin/graphm
 		$(CXX) $(CFLAGS) -c algorithm_umeyama.cpp  -o ./algorithm_umeyama.o
 ./algorithm_unif.o:   algorithm_unif.cpp algorithm_unif.h
 		$(CXX) $(CFLAGS) -c algorithm_unif.cpp  -o ./algorithm_unif.o
+
+./sgm_algorithm_spath.o: sgm_algorithm_spath.cpp sgm_algorithm_spath.h
+		$(CXX) $(CFLAGS) -c sgm_algorithm_spath.cpp -o ./sgm_algorithm_spath.o
 
 clean:
 	rm -f ./*o

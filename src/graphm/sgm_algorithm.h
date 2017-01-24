@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Mikhail Zaslavskiy   *
- *      *
+ *   Copyright (C) 2008 by Mikhail Zaslavskiy   *
+ *   mikhail.zaslavskiy@ensmp.fr   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,58 +17,54 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef EXPERIMENT_H
-#define EXPERIMENT_H
-
+#ifndef SGMALGORITHM_H
+#define SGMALGORITHM_H
+#define EPSILON 1e-100
 #include "rpc.h"
-#include "math.h"
+#include "algorithm"
 #include "graph.h"
+#include <math.h>
+#include "hungarian.h"
 #include "algorithm.h"
-#include "algorithm_umeyama.h"
-#include "algorithm_iden.h"
-#include "algorithm_rank.h"
-#ifdef LP_INCLUDE
-#include "algorithm_lp.h"
-#endif
-#include "algorithm_qcv.h"
-#include "algorithm_unif.h"
-#include "algorithm_fsol.h"
-#include "algorithm_rand.h"
-#include "algorithm_path.h"
-#include "algorithm_ca.h"
-#include "algorithm_ext.h"
-#include "sgm_algorithm.h"
-#include "sgm_algorithm_spath.h"
-#include <strstream>
-#include <stdexcept>
-#include <exception>
-#include <string>
-#include <algorithm>
-/**
-Experiment class. It implements all extern routines for graph matching experiments
 
-	@author Mikhail Zaslavskiy
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_permutation.h>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_eigen.h>
+
+#include <vector>
+#include <iostream>
+#include <ctime>
+
+/*
+
+
+Parent class for all graph matching algorithms
+
+@author Mikhail Zaslavskiy <mikhail.zaslavskiy@ensmp.fr>
 */
 
-
-class experiment : public rpc
+class sgm_algorithm : public algorithm
 {
 public:
-    experiment(std::string fconfig="config.txt"):rpc(fconfig){};
-    void run_experiment();
-    void run_experiment(graph &g,graph &h);
-    void run_sgm_experiment(graph &g,graph &h, int n_seeds);
-    ~experiment();
-    void printout(std::string fname_out,std::string sformat);
-    void printout(std::string fname_out);
-    void printout();
-    algorithm* get_algorithm(std::string salgo);
-    gsl_matrix* get_P_result(int algo_index);
-    int get_algo_len();
+	sgm_algorithm(std::string );
+	sgm_algorithm();
+	match_result gmatch(graph& g, graph& h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);//common stuff,
+	virtual match_result match(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1)=0;//particular method implementation
+	virtual match_result match_with_seeds(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1, unsigned int m_seeds=0)=0;//particular method implementation
+		~sgm_algorithm();
+
+
 protected:
-    std::vector<match_result> v_mres;
-    void synchronize(graph &g, graph &h,gsl_matrix** gm_ldh=NULL);
+
+	//double f_qcv(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_P,gsl_matrix * gm_temp,bool bqcv=false);
+
+	long long m;
+
 
 };
 
-#endif
+#endif //SGM_ALGORITHM
