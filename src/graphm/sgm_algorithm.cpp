@@ -1,19 +1,22 @@
 #include "sgm_algorithm.h"
 #include "algorithm.h"
-
+#include "rpc.h"
 
 sgm_algorithm::sgm_algorithm(std::string fconfig)
 : algorithm(fconfig)
 {
-	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;
+	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false; m =0;
 }
 sgm_algorithm::sgm_algorithm()
 : algorithm()
 {
-	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';
+	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';m=0;
 }
-
-
+sgm_algorithm::sgm_algorithm(int m)
+	: algorithm()
+{
+	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';this->m=m;
+}
 //common framework for graph matching algorithm
 match_result sgm_algorithm::gmatch(graph& g, graph& h,gsl_matrix *gm_P_i,gsl_matrix* _gm_ldh,double _dalpha_ldh)
 {

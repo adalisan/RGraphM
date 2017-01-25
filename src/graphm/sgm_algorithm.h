@@ -52,6 +52,7 @@ class sgm_algorithm : public algorithm
 public:
 	sgm_algorithm(std::string );
 	sgm_algorithm();
+	sgm_algorithm(int );
 	match_result gmatch(graph& g, graph& h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);//common stuff,
 	virtual match_result match(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1)=0;//particular method implementation
 	virtual match_result match_with_seeds(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1, unsigned int m_seeds=0)=0;//particular method implementation

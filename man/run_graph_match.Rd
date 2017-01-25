@@ -102,9 +102,23 @@ print( algorithm_params)
 
 C<-matrix( runif(	min = 0, max = 1,n= 225),15,15)
 diag(C)<- 1
-B <- C*B
+C <- C*B
 perm <- sample.int(15)
-A<-B [perm,perm]
-weightedmatrixresult <- run_graph_match(A,B, algorithm_params)
+D<-C [perm,perm]
+weightedmatrixresult <- run_graph_match(D,C, algorithm_params)
 
+algorithm_params$algo <- "sPATH"
+algorithm_params$algo_init_sol <- "unif"
+algorithm_params$do_sgm <- 1
+algorithm_params$number_of_seeds<- 4
+algorithm_params$bverbose <- 1
+perm <- c(1:4 , 4+sample.int(11))
+A<-B [perm,][,perm]
+
+seeded_gm_results<- run_graph_match(A,B, algorithm_params)
+
+m_a_1EWK <- as.matrix(read.table("./src/graphm/test/m_a_1EWK",sep="",header=FALSE))
+m_a_1U19 <- as.matrix(read.table("./src/graphm/test/m_a_1U19",sep="",header=FALSE))
+
+seeded_gm_results_2<- run_graph_match(m_a_1EWK,m_a_1U19, algorithm_params)
 }

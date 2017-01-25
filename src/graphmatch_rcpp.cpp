@@ -117,8 +117,31 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   std::vector<Rcpp::NumericMatrix> P_matrix_list ;
   std::vector<Rcpp::NumericVector> P_vector_list ;
   try {
-
-  	exp.run_experiment(graphm_obj_A, graphm_obj_B);
+  	int do_sgm = 0;
+  	if (!Rf_isNull(algorithm_params["do_sgm"]) ){
+  		if (!Rf_isNumeric(algorithm_params["do_sgm"])){
+  			if (Rf_isString(algorithm_params["do_sgm"])){
+  			  Rcout << "do sgm: "<< as<string>(algorithm_params["do_sgm"]);
+  			}
+        Rf_PrintValue(algorithm_params["do_sgm"]);
+  			Rf_warning("do_sgm named element should be integer. Assuming unseeded graph matching.");
+  			do_sgm = 0;
+  		} else {
+  			double tmp = as<double>(algorithm_params["do_sgm"]);
+  			do_sgm = int(tmp);
+    		if (do_sgm== 1){
+    			int num_seeds = as<int>(algorithm_params["number_of_seeds"]);
+    			exp.run_sgm_experiment(graphm_obj_A, graphm_obj_B, num_seeds);
+    		} else {
+    			do_sgm  = 0;
+    		}
+  		}
+    } else {
+    	do_sgm = 0;
+    }
+    if (do_sgm == 0 ) { // Run unseeded graph matching
+    	exp.run_experiment(graphm_obj_A, graphm_obj_B);
+    }
 
   	int exp_count = exp.get_algo_len();
 

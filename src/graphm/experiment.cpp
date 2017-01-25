@@ -425,7 +425,8 @@ algorithm* experiment::get_algorithm(std::string salgo)
    if (salgo.compare("GA")==0){ return new algorithm_ca;};
 
    if (salgo.compare("EXT")==0){ return new algorithm_NEW;};
-   if (salgo.compare("sPATH")==0){ return (algorithm*)(new sgm_algorithm_spath);};
+   int n_seeds = this->get_param_i("number_of_seeds");
+   if (salgo.compare("sPATH")==0){ return (algorithm*)(new sgm_algorithm_spath(n_seeds));};
 
    throw std::runtime_error("Error: graph matching algorithm is not selected");
 }

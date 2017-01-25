@@ -25,12 +25,13 @@
 /**
 A path following graph matching algorithm
 
-	@author Mikhail Zaslavskiy <mikhail.zaslavskiy@ensmp.fr>
+	@author Sancar Adali <sadali@gmail.com>;Mikhail Zaslavskiy <mikhail.zaslavskiy@ensmp.fr>
 */
 class sgm_algorithm_spath : public sgm_algorithm
 {
-public:
 
+public:
+	  sgm_algorithm_spath(int);
     match_result match(graph &g,graph &h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);
 
 		match_result match_with_seeds(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1, unsigned int m_seeds=0);

@@ -20,6 +20,10 @@
 //#include "algorithm_path.h"
 #include "sgm_algorithm_spath.h"
 
+sgm_algorithm_spath::sgm_algorithm_spath(int num_seeds) :sgm_algorithm(num_seeds)
+ {
+
+}
 match_result sgm_algorithm_spath::match(graph &g,graph &h,gsl_matrix* gm_P_i, gsl_matrix* gm_ldh,double dalpha_ldh){
  return(this->match_with_seeds(g, h ,gm_P_i, gm_ldh, dalpha_ldh, 0))	;
 }
@@ -468,12 +472,16 @@ void sgm_algorithm_spath::qcvqcc_gradient(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_
 }
 
 void sgm_algorithm_spath::nonseededPtoseededP(gsl_matrix *P, unsigned int m){
+	//*gout<<"Using the first "<<m<<" vertex pairs as seeds"<<std::endl;
+	if (m>0) {
+
 	gsl_matrix_view gmv_P_seed = gsl_matrix_submatrix(P,0,0,m,m);
 	gsl_matrix_set_identity(&gmv_P_seed.matrix);
-	gsl_matrix_view gmv_P_seed_nonseed = gsl_matrix_submatrix(P,0,m,m,N);
+	gsl_matrix_view gmv_P_seed_nonseed = gsl_matrix_submatrix(P,0,m,m,N-m);
 	gsl_matrix_set_zero(&gmv_P_seed_nonseed.matrix);
-	gsl_matrix_view gmv_P_nonseed_seed = gsl_matrix_submatrix(P,m,0,N,m);
+	gsl_matrix_view gmv_P_nonseed_seed = gsl_matrix_submatrix(P,m,0,N-m,m);
 	gsl_matrix_set_zero(&gmv_P_nonseed_seed.matrix);
+	}
 
 }
 //gradient for qcc function, here gm_A*_d are the laplacian matrices,update current gradient value
