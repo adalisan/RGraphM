@@ -107,18 +107,24 @@ perm <- sample.int(15)
 D<-C [perm,perm]
 weightedmatrixresult <- run_graph_match(D,C, algorithm_params)
 
+algorithm_params$verbose_mode <- as.integer(1)
 algorithm_params$algo <- "sPATH"
-algorithm_params$algo_init_sol <- "unif"
-algorithm_params$do_sgm <- 1
-algorithm_params$number_of_seeds<- 4
-algorithm_params$bverbose <- 1
+algorithm_params$algo_init_sol <- "sunif"
+algorithm_params$do_sgm <- as.integer(1)
+algorithm_params$number_of_seeds<- as.integer(4)
+algorithm_params$bverbose <- as.integer(1)
 perm <- c(1:4 , 4+sample.int(11))
 A<-B [perm,][,perm]
 
 seeded_gm_results<- run_graph_match(A,B, algorithm_params)
 
+perm <-sample.int(15)
+Aerror<-B [perm,][,perm]
+seeded_gm_results_e<- run_graph_match(Aerror,B, algorithm_params)
+perm
+
 m_a_1EWK <- as.matrix(read.table("./src/graphm/test/m_a_1EWK",sep="",header=FALSE))
 m_a_1U19 <- as.matrix(read.table("./src/graphm/test/m_a_1U19",sep="",header=FALSE))
-
+algorithm_params$number_of_seeds<- as.integer(0)
 seeded_gm_results_2<- run_graph_match(m_a_1EWK,m_a_1U19, algorithm_params)
 }

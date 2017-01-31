@@ -39,6 +39,7 @@
 #include "algorithm_ext.h"
 #include "sgm_algorithm.h"
 #include "sgm_algorithm_spath.h"
+#include "sgm_algorithm_sunif.h"
 #include <strstream>
 #include <stdexcept>
 #include <exception>

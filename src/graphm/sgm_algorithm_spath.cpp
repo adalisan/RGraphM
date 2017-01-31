@@ -31,8 +31,10 @@ match_result sgm_algorithm_spath::match(graph &g,graph &h,gsl_matrix* gm_P_i, gs
 match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matrix* gm_P_i, gsl_matrix* gm_ldh,double dalpha_ldh, unsigned int m_seeds)
 {
 	//int m  = get_param_i("num_seeds");
-        bool bblast_match=(get_param_i("blast_match")==1);
-        bool bblast_match_end=(get_param_i("blast_match_proj")==1);
+	//this->m = m_seeds;
+
+    bool bblast_match=(get_param_i("blast_match")==1);
+    bool bblast_match_end=(get_param_i("blast_match_proj")==1);
 	bool bbest_path_proj=(get_param_i("best_path_proj_sol")==1);
 	bool bbest_path_blast_proj=(get_param_i("best_path_blast_proj_sol")==1);
 	bool bbest_path_greedy=(get_param_i("best_path_greedy_sol")==1);
@@ -44,11 +46,17 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	double dlambda_M=get_param_d("qcvqcc_lambda_M");
 	double dlambda_min=get_param_d("qcvqcc_lambda_min");
 	bool bverbose=(get_param_i("verbose_mode")==1);
+	std::string verbose_fname = get_param_s("verbose_file");
 	double dhung_max=get_param_d("hungarian_max");
-        double bgreedy=(get_param_i("hungarian_greedy")==1);
+  double bgreedy=(get_param_i("hungarian_greedy")==1);
 
 	if (bverbose)
 		*gout<<"Path matching"<<std::endl;
+	if (bverbose) {
+
+		*gout<<"this_m: "<< this->m <<std::endl; //
+		*gout<<"m_seeds: "<<m_seeds<<std::endl; //
+	}
 	//some duplicate variables
 	gsl_matrix* gm_Ag_d=g.get_descmatrix(cdesc_matrix);
 	gsl_matrix* gm_Ah_d=h.get_descmatrix(cdesc_matrix);
@@ -82,6 +90,7 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 		};
 	gsl_matrix_transpose(gm_Delta);
 	gsl_matrix_scale(gm_Delta,1-dalpha_ldh);
+	
 
 	gsl_vector_view gvv_Delta=gsl_vector_view_array(gm_Delta->data,N*N);
 	//memory allocation
@@ -102,8 +111,12 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	gsl_matrix* gm_dP=gsl_matrix_alloc(N,N);
 	gsl_matrix_set_zero(gm_P_prev);
 
-	if (gm_P_i==NULL)
-		gsl_matrix_set_all(gm_P,1.0/N);
+	if (gm_P_i==NULL){
+		gsl_matrix_set_all(gm_P,1.0/(N-m));
+		if (m > 0) {
+			nonseededPtoseededP(gm_P,m);
+		}
+	}
 	else
 		gsl_matrix_memcpy(gm_P,gm_P_i);
 
@@ -174,7 +187,7 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	//the default gsl representation is made by rows
 	//gradient estimation: Agh*P, Here instead of P we have to use gvv_P_prev.
 	if (pdebug.ivalue) gsl_matrix_printout(&gvv_P_prev.vector,"gvv_P_prev",pdebug.strvalue);
-	qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_P_prev.vector,gv_C,dlambda,gv_temp,m);
+	qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_P_prev.vector,gv_C,dlambda,gv_temp);
 	if (pdebug.ivalue) gsl_matrix_printout(gv_C,"gv_C",pdebug.strvalue);
 	//scaling without minus because before we have changed the Lghsign and Delta substraction
 	//also we do not need to transpose Delta
@@ -200,7 +213,12 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	//hungarian, before  C matrix must be transposed
 	gsl_matrix_transpose(C);
 	dt1=clock();
-	gsl_matrix_hungarian(C,gm_P,NULL,NULL,false,(bblast_match?gm_ldh:NULL),bgreedy);
+	// constrain gm_P to be seeded by solving the hungarian problem with the nonseeded portion of gradient.
+	
+	gsl_matrix_view C_sub = gsl_matrix_submatrix(C,m,m,N-m,N-m);
+	nonseededPtoseededP(gm_P, m);
+	gsl_matrix_view gm_P_sub = gsl_matrix_submatrix(gm_P,m,m,N-m,N-m);
+	gsl_matrix_hungarian(&C_sub.matrix, &gm_P_sub.matrix,NULL,NULL,false,(bblast_match?gm_ldh:NULL),bgreedy);
 	dt2=clock();
 	gsl_matrix_transpose(C);
 	gsl_matrix_scale(C,1/dscale_factor);
@@ -224,7 +242,7 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	gsl_blas_ddot(&gvv_dP.vector,&gvv_Delta.vector,&b3);
 	//gsl_blas_dgemv(CblasNoTrans,1,gm_Lgh,&gvv_dP.vector,0,gv_temp);
 	gsl_matrix_transpose(gm_dP);
-	qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_dP.vector,gv_temp,dlambda,gv_temp2,m);
+	qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_dP.vector,gv_temp,dlambda,gv_temp2);
 	if (pdebug.ivalue) gsl_matrix_printout(gm_temp,"gm_temp",pdebug.strvalue);
 	gsl_matrix_transpose(gm_dP);
 	//qcvqcc_gradient_sparse(spm_A,&gvv_dP.vector, gv_temp,v_x,v_res);
@@ -291,6 +309,8 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 		//permuation projection
 		gsl_matrix_transpose_memcpy(gm_P_bp_temp,gm_P);
 		gsl_matrix_scale(gm_P_bp_temp,-10000);
+
+
 		gsl_matrix_hungarian(gm_P_bp_temp,gm_P_prev,NULL,NULL,false,NULL,bgreedy);
 		double df_bp_new=f_qcv(gm_Ag_d,gm_Ah_d,gm_P_prev,gm_temp2,true);
 		if (df_bp_new<fbest_path)
@@ -412,11 +432,19 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	};//end pathway cycle
 	match_result mres;
 	mres.gm_P_exact=gsl_matrix_alloc(N,N);
+	//nonseededPtoseededP(gm_P,m);
 	gsl_matrix_memcpy(mres.gm_P_exact,gm_P);
 
-	//permuation projection
+	//permutation projection
 	gsl_matrix_transpose_memcpy(gm_P_prev,gm_P);
+	//nonseededPtoseededP(gm_P_prev,m);
 	gsl_matrix_scale(gm_P_prev,-10000);
+
+	//gsl_matrix_view gm_P_prev_sub = gsl_matrix_submatrix(gm_P_prev,m,m,N-m,N-m);
+	//nonseededPtoseededP(gm_P,m);
+	//gsl_matrix_view gm_P_sub = gsl_matrix_submatrix(gm_P,m,m,N-m,N-m);
+
+	//gsl_matrix_hungarian(&gm_P_prev_sub.matrix,&gm_P_sub.matrix,NULL,NULL,false,(bblast_match_end?gm_ldh:NULL),bgreedy);
 	gsl_matrix_hungarian(gm_P_prev,gm_P,NULL,NULL,false,(bblast_match_end?gm_ldh:NULL),bgreedy);
 	if (bbest_path){
 		double df_bp_new=f_qcv(gm_Ag_d,gm_Ah_d,gm_P,gm_temp,true);
@@ -463,41 +491,32 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 
 
 //gradient for qcvqcc function
-void sgm_algorithm_spath::qcvqcc_gradient(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix *gm_Lg_d,gsl_matrix *gm_Lh_d,gsl_vector* gv_P, gsl_vector* gv_grad,double dlambda,gsl_vector * gv_temp, unsigned int m)
+void sgm_algorithm_spath::qcvqcc_gradient(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix *gm_Lg_d,gsl_matrix *gm_Lh_d,gsl_vector* gv_P, gsl_vector* gv_grad,double dlambda,gsl_vector * gv_temp)
 {
 	gsl_matrix_view gmv_temp=gsl_matrix_view_array(gv_temp->data,N,N);
-	qcv_gradient_opt(gm_Ag_d,gm_Ah_d,gv_P,gv_grad,&gmv_temp.matrix,m);
+	qcv_gradient_opt(gm_Ag_d,gm_Ah_d,gv_P,gv_grad,&gmv_temp.matrix);
 	gsl_vector_scale(gv_grad,dlambda);
-	qcc_gradient_opt(gm_Lg_d, gm_Lh_d, gv_P, gv_grad,-(1-dlambda),&gmv_temp.matrix,m);
+	qcc_gradient_opt(gm_Lg_d, gm_Lh_d, gv_P, gv_grad,-(1-dlambda),&gmv_temp.matrix);
+	gsl_matrix_view gmv_grad=gsl_matrix_view_array(gv_grad->data,N,N);
+	// zero out the gradient values in the direction of seeded rows/columns of P
+	nonseededGradtoseededGrad(&gmv_grad.matrix,m);
 }
 
-void sgm_algorithm_spath::nonseededPtoseededP(gsl_matrix *P, unsigned int m){
-	//*gout<<"Using the first "<<m<<" vertex pairs as seeds"<<std::endl;
-	if (m>0) {
-
-	gsl_matrix_view gmv_P_seed = gsl_matrix_submatrix(P,0,0,m,m);
-	gsl_matrix_set_identity(&gmv_P_seed.matrix);
-	gsl_matrix_view gmv_P_seed_nonseed = gsl_matrix_submatrix(P,0,m,m,N-m);
-	gsl_matrix_set_zero(&gmv_P_seed_nonseed.matrix);
-	gsl_matrix_view gmv_P_nonseed_seed = gsl_matrix_submatrix(P,m,0,N-m,m);
-	gsl_matrix_set_zero(&gmv_P_nonseed_seed.matrix);
-	}
-
-}
 //gradient for qcc function, here gm_A*_d are the laplacian matrices,update current gradient value
-void sgm_algorithm_spath::qcc_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_vector* gv_P, gsl_vector* gv_grad,double dmult,gsl_matrix * gm_temp, unsigned int m)
+void sgm_algorithm_spath::qcc_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_vector* gv_P, gsl_vector* gv_grad,double dmult,gsl_matrix * gm_temp)
 {
 	gsl_matrix_view gmv_grad=gsl_matrix_view_array(gv_grad->data,N,N);
 	// gmv_grad  = \Grad
 	gsl_matrix_transpose(&gmv_grad.matrix);
 	gsl_matrix_view gmv_P=gsl_matrix_view_array(gv_P->data,N,N);
+
+	// change P_tmp to P' for seeded I \directsum P_n'
+
+	//nonseededPtoseededP(&gmv_P.matrix,m);
 	// P_tmp <- P'
 	gsl_matrix_transpose(&gmv_P.matrix);
 	//if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
 
-	// change P_tmp to P' for seeded I \directsum P_n'
-
-	nonseededPtoseededP(&gmv_P.matrix,m);
 
 	// gm_temp = (Lh*P_tmp)
 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_Ah_d,&gmv_P.matrix,0,gm_temp);
@@ -513,19 +532,20 @@ void sgm_algorithm_spath::qcc_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah
 	//Grad' += 2*(1-dlambda)*(1-dalpha_ldh)/df_norm(Ag^2+Ah^2)*Lg* I \directsum P_n *Lh'
 	gsl_matrix_transpose(&gmv_grad.matrix);
 	//Grad = Grad'
+	nonseededGradtoseededGrad(&gmv_grad.matrix,m);
 
 }
 
 //optimized version of gradient calculations: tensor product tricks
 // Note: returns  the transpose of gradient
-void sgm_algorithm_spath::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_vector* gv_P,  gsl_vector* gv_grad, gsl_matrix * gm_temp, unsigned int m)
+void sgm_algorithm_spath::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_vector* gv_P,  gsl_vector* gv_grad, gsl_matrix * gm_temp)
 {
 	// This block computes 1st term of convex component  in 3.5.2  of TPAMI paper
 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
 	gsl_matrix *gm_1=gsl_matrix_alloc(N,N);
 	gsl_matrix_view gmv_grad=gsl_matrix_view_array(gv_grad->data,N,N);
 	gsl_matrix_view gmv_P=gsl_matrix_view_array(gv_P->data,N,N);
-	nonseededPtoseededP(&gmv_P.matrix, m);
+	//nonseededPtoseededP(&gmv_P.matrix, m);
 	// gm_temp= Ag*P
 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_Ag_d,&gmv_P.matrix,0,gm_temp);
 	if (bnosymm) gsl_matrix_transpose(gm_Ag_d);
@@ -581,13 +601,130 @@ void sgm_algorithm_spath::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah
 	gsl_matrix_transpose(&gmv_grad.matrix);
 	gsl_matrix_scale(&gmv_grad.matrix,1-dalpha_ldh);//label cost function scaling
 	gsl_vector_scale(gv_grad,1/df_norm);//normalization
+	nonseededGradtoseededGrad(&gmv_grad.matrix,m);
 
 }
 
 
 
+// //concave function value
+// double sgm_algorithm_spath::f_qcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_Delta,gsl_matrix* gm_P,gsl_matrix * gm_temp,gsl_matrix *gm_temp2,gsl_matrix *gm_tempAg, gsl_matrix *gm_tempAh)
+// {   //nonseededPtoseededP(gm_P,m);
+// 	gsl_matrix_memcpy (gm_tempAg, gm_Ag_d);
+// 	gsl_matrix_memcpy (gm_tempAh, gm_Ah_d);
+//     //if (this->m > 0) {
+// 	//	gsl_matrix_view gm_tempAg_upper_left	= gsl_matrix_submatrix(gm_tempAg,0,0,m,m);
+// 	//	gsl_matrix_view gm_tempAh_upper_left	= gsl_matrix_submatrix(gm_tempAh,0,0,m,m);
+// 	//	gsl_matrix_set_zero(&gm_tempAg_upper_left.matrix);
+// 	//	gsl_matrix_set_zero(&gm_tempAh_upper_left.matrix);
+// 	//}
+// 	gsl_matrix_transpose(gm_P);
+// 	if (bnosymm) gsl_matrix_transpose(gm_tempAh);
+// 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_tempAh,gm_P,0,gm_temp);
+// 	if (bnosymm) gsl_matrix_transpose(gm_tempAh);
+// 	gsl_matrix_transpose(gm_P);
+// 	gsl_matrix_transpose(gm_temp);
+// 	if (bnosymm) gsl_matrix_transpose(gm_tempAg);
+// 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_tempAg,gm_temp,0,gm_temp2);
+// 	if (bnosymm) gsl_matrix_transpose(gm_tempAg);
+// 	gsl_matrix_memcpy(gm_temp,gm_P);
+// 	gsl_matrix_mul_elements(gm_temp,gm_temp2);
+// 	double dres=-2*gsl_matrix_sum(gm_temp);
+// 	gsl_matrix_transpose_memcpy(gm_temp,gm_tempAh);
+// 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_temp,gm_tempAh,0,gm_temp2);
+// 	double dconst_add=0;
+// 	for (int i=0;i<gm_temp2->size1;i++)
+// 		dconst_add+=gsl_matrix_get(gm_temp2,i,i);
+// 	gsl_matrix_transpose_memcpy(gm_temp,gm_tempAg);
+// 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_temp,gm_tempAg,0,gm_temp2);
+// 	for (int i=0;i<gm_temp2->size1;i++)
+// 		dconst_add+=gsl_matrix_get(gm_temp2,i,i);
+// 	dres+=dconst_add;
+// 	dres=dres*(1-dalpha_ldh);
+// 	dres/=df_norm;
+// 	return dres;
+// }
+
+//convex-concave function value
+double sgm_algorithm_spath::f_qcvqcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix *gm_Lg_d,gsl_matrix *gm_Lh_d,gsl_matrix* gm_Delta,gsl_matrix* gm_P,double dlambda,gsl_matrix * gm_temp,gsl_matrix *gm_temp2)
+{
+	double f1=f_qcv(gm_Ag_d,gm_Ah_d,gm_P,gm_temp,false);
+	gsl_matrix *A_g_temp=gsl_matrix_alloc(N,N);
+	gsl_matrix *A_h_temp=gsl_matrix_alloc(N,N);
+	double f2=f_qcc(gm_Lg_d,gm_Lh_d,gm_Delta,gm_P,gm_temp,gm_temp2);//,A_g_temp,A_h_temp);
+	double dres=dlambda*f1+(1-dlambda)*f2;
+	gsl_matrix_transpose_memcpy(gm_temp,gm_Delta);
+	gsl_matrix_mul_elements(gm_temp,gm_P);
+	dres=dres-gsl_matrix_sum(gm_temp);
+	gsl_matrix_free(A_g_temp);
+	gsl_matrix_free(A_h_temp);
+	return dres;
+}
+
+
+
+// //convex representation of the objective function ||AP-PA||^2_F
+// double sgm_algorithm_spath::f_qcv(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_P,gsl_matrix * gm_temp,bool bqcv)
+// {
+
+// 	//nonseededPtoseededP(gm_P,m);
+// 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_Ag_d,gm_P,0,gm_temp);
+// 	//gsl_blas_dgemm_sym(CblasLeft,CblasUpper,CblasNoTrans,CblasNoTrans,1,gm_Ag_d,gm_P,0,gm_temp);
+// 	gsl_matrix_transpose(gm_P);
+// 	gsl_matrix_transpose(gm_temp);
+//         if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
+// 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,-1,gm_Ah_d,gm_P,1,gm_temp);
+// 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
+// 	gsl_matrix_transpose(gm_P);
+// 	//gsl_matrix_view gm_temp_upper_left = gsl_matrix_submatrix(gm_temp,0,0,m,m);
+// 	//gsl_matrix_set_zero(&gm_temp_upper_left.matrix);
+// 	//gsl_blas_dgemm_sym(CblasLeft,CblasUpper,CblasTrans,CblasTrans,-1,gm_Ah_d,gm_P,1,gm_temp);
+// 	//double dres= pow(gsl_matrix_norm(gm_temp_upper_left,2),2);
+// 	double dres= pow(gsl_matrix_norm(gm_temp,2),2);
+// 	dres=dres*(1-dalpha_ldh);
+// 	dres/=df_norm;
+// 	if ((bqcv) and (dalpha_ldh>0))//if just QCV optimization then alpha_ldh must be integrated, in QCVQCC and P cases we use Delta for these purposes
+// 	{gsl_vector_view gvv_ldh=gsl_vector_view_array(gm_ldh->data,N*N);
+// 	gsl_vector_view gvv_P=gsl_vector_view_array(gm_P->data,N*N);
+// 	double dtr;
+// 	gsl_blas_ddot(&gvv_ldh.vector,&gvv_P.vector,&dtr);
+// 	dtr*=dalpha_ldh;
+// 	dres-=dtr;};
+// 	//normalization
+// 	return dres;
+// }
+
+
+//convex representation of the objective function ||AP-PA||^2_F
+double sgm_algorithm_spath::f_qcv(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_P,gsl_matrix * gm_temp,bool bqcv)
+{
+	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_Ag_d,gm_P,0,gm_temp);
+	//gsl_blas_dgemm_sym(CblasLeft,CblasUpper,CblasNoTrans,CblasNoTrans,1,gm_Ag_d,gm_P,0,gm_temp);
+	gsl_matrix_transpose(gm_P);
+	gsl_matrix_transpose(gm_temp);
+        if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
+	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,-1,gm_Ah_d,gm_P,1,gm_temp);
+	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
+	gsl_matrix_transpose(gm_P);
+	//gsl_blas_dgemm_sym(CblasLeft,CblasUpper,CblasTrans,CblasTrans,-1,gm_Ah_d,gm_P,1,gm_temp);
+	double dres= pow(gsl_matrix_norm(gm_temp,2),2);
+	dres=dres*(1-dalpha_ldh);
+	dres/=df_norm;
+	if ((bqcv) and (dalpha_ldh>0))//if just QCV optimization then alpha_ldh must be integrated, in QCVQCC and P cases we use Delta for these purposes
+	{gsl_vector_view gvv_ldh=gsl_vector_view_array(gm_ldh->data,N*N);
+	gsl_vector_view gvv_P=gsl_vector_view_array(gm_P->data,N*N);
+	double dtr;
+	gsl_blas_ddot(&gvv_ldh.vector,&gvv_P.vector,&dtr);
+	dtr*=dalpha_ldh;
+	dres-=dtr;};
+	//normalization
+	return dres;
+}
+
+
+
 //concave function value
-double sgm_algorithm_spath::f_qcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_Delta,gsl_matrix* gm_P,gsl_matrix * gm_temp,gsl_matrix *gm_temp2, unsigned int m)
+double sgm_algorithm_spath::f_qcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_Delta,gsl_matrix* gm_P,gsl_matrix * gm_temp,gsl_matrix *gm_temp2)
 {
 	gsl_matrix_transpose(gm_P);
 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
@@ -616,14 +753,11 @@ double sgm_algorithm_spath::f_qcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_ma
 	return dres;
 }
 
-//convex-concave function value
-double sgm_algorithm_spath::f_qcvqcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix *gm_Lg_d,gsl_matrix *gm_Lh_d,gsl_matrix* gm_Delta,gsl_matrix* gm_P,double dlambda,gsl_matrix * gm_temp,gsl_matrix *gm_temp2)
-{
-	double f1=f_qcv(gm_Ag_d,gm_Ah_d,gm_P,gm_temp,false);
-	double f2=f_qcc(gm_Lg_d,gm_Lh_d,gm_Delta,gm_P,gm_temp,gm_temp2);
-	double dres=dlambda*f1+(1-dlambda)*f2;
-	gsl_matrix_transpose_memcpy(gm_temp,gm_Delta);
-	gsl_matrix_mul_elements(gm_temp,gm_P);
-	dres=dres-gsl_matrix_sum(gm_temp);
-	return dres;
+void sgm_algorithm_spath::nonseededGradtoseededGrad(gsl_matrix *Grad, int m_seeds){
+	gsl_matrix_view sub_grad = gsl_matrix_submatrix(Grad,0,0,m_seeds,m_seeds);
+	gsl_matrix_set_zero(&sub_grad.matrix);
+	sub_grad = gsl_matrix_submatrix(Grad,0,m_seeds,m_seeds,N-m_seeds);
+	gsl_matrix_set_zero(&sub_grad.matrix);
+	sub_grad = gsl_matrix_submatrix(Grad,m_seeds,0,N-m_seeds,m_seeds);
+	gsl_matrix_set_zero(&sub_grad.matrix);
 }

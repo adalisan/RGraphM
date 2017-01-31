@@ -17,57 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SGMALGORITHM_H
-#define SGMALGORITHM_H
-#define EPSILON 1e-100
-#include "rpc.h"
-#include "algorithm"
-#include "graph.h"
-#include <math.h>
-#include "hungarian.h"
-#include "algorithm.h"
-
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_permutation.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_eigen.h>
-
-#include <vector>
-#include <iostream>
-#include <ctime>
-
-/*
+#ifndef SGM_ALGORITHM_sUNIF_H
+#define SGM_ALGORITHM_sUNIF_H
+#include "sgm_algorithm.h"
 
 
-Parent class for all graph matching algorithms
+/**
+A path following graph matching algorithm
 
-@author Mikhail Zaslavskiy <mikhail.zaslavskiy@ensmp.fr>
+	@author Sancar Adali <sadali@gmail.com>;Mikhail Zaslavskiy <mikhail.zaslavskiy@ensmp.fr>
 */
-
-class sgm_algorithm : public algorithm
+class sgm_algorithm_sunif : public sgm_algorithm
 {
+
 public:
-	sgm_algorithm(std::string );
-	sgm_algorithm();
-	sgm_algorithm(int );
-	match_result gmatch(graph& g, graph& h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);//common stuff,
-	virtual match_result match(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1)=0;//particular method implementation
-	virtual match_result match_with_seeds(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1, unsigned int m_seeds=0)=0;//particular method implementation
-	void nonseededPtoseededP(gsl_matrix * gmv_P, unsigned int m);
+	  sgm_algorithm_sunif(int);
+    match_result match(graph &g,graph &h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);
 
-		~sgm_algorithm();
+		match_result match_with_seeds(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1, unsigned int m_seeds=0);
 
-
-protected:
-
-	//double f_qcv(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_matrix* gm_P,gsl_matrix * gm_temp,bool bqcv=false);
-
-	long long m;
-
+    
 
 };
 
-#endif //SGM_ALGORITHM
+#endif

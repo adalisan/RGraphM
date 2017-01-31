@@ -3,7 +3,7 @@ CFLAGS = -Wno-deprecated -O3 -fPIC @GSL_CFLAGS@/gsl
 #LDFLAGS= -lgsl -lgslcblas
 SHVER = 1
 all: ./bin/graphm
-./bin/graphm: ./sgm_algorithm_spath.o ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./sgm_algorithm.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o main.cpp
+./bin/graphm: ./sgm_algorithm_spath.o  ./sgm_algorithm_sunif.o ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./sgm_algorithm.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o main.cpp
 	$(CXX) $(CFLAGS)  main.cpp ./*o $(LDFLAGS) -o ./bin/graphm @GSL_LIBS@
 #interface classes
 ./experiment.o:   experiment.cpp experiment.h
@@ -46,5 +46,7 @@ all: ./bin/graphm
 ./sgm_algorithm_spath.o: sgm_algorithm_spath.cpp sgm_algorithm_spath.h
 		$(CXX) $(CFLAGS) -c sgm_algorithm_spath.cpp -o ./sgm_algorithm_spath.o
 
+./sgm_algorithm_sunif.o: sgm_algorithm_sunif.cpp sgm_algorithm_sunif.h
+		$(CXX) $(CFLAGS) -c sgm_algorithm_sunif.cpp -o ./sgm_algorithm_sunif.o
 clean:
 	rm -f ./*o
