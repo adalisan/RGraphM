@@ -13,8 +13,8 @@ match_result sgm_algorithm_sunif::match_with_seeds(graph& g, graph& h,gsl_matrix
 	//some duplicate variables
 	match_result mres;
 	mres.gm_P=gsl_matrix_alloc(N,N);
-    gsl_matrix_set_all(mres.gm_P,1.0/(N- m_seeds));
-    nonseededPtoseededP(mres.gm_P, m_seeds);
+    gsl_matrix_set_all(mres.gm_P,1.0/(N- m));
+    nonseededPtoseededP(mres.gm_P, m);
 
 	
 	mres.gm_P_exact=NULL;

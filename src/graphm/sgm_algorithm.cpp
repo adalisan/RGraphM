@@ -12,10 +12,10 @@ sgm_algorithm::sgm_algorithm()
 {
 	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A'; this->m=0;
 }
-sgm_algorithm::sgm_algorithm(int m)
+sgm_algorithm::sgm_algorithm(int _m)
 	: algorithm()
 {
-	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';this->m=m; 
+	gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';this->m=_m; 
 }
 
 
@@ -30,6 +30,7 @@ void sgm_algorithm::nonseededPtoseededP(gsl_matrix *P, unsigned int _m){
 	gsl_matrix_view gmv_P_nonseed_seed = gsl_matrix_submatrix(P,_m,0,N-_m,_m);
 	gsl_matrix_set_zero(&gmv_P_nonseed_seed.matrix);
 	}
+	else {*gout<<"Using the first "<<_m<<" vertex pairs as seeds. Why is this function called?"<<std::endl;}
 
 }
 
@@ -54,7 +55,7 @@ match_result sgm_algorithm::gmatch(graph& g, graph& h,gsl_matrix *gm_P_i,gsl_mat
 		
 	//};
 	N=g.getN();
-	unsigned  int m_seeds = 0;
+	
 	int do_seeds = get_param_i("do_sgm");
 	 
 

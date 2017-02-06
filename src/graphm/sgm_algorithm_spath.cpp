@@ -51,11 +51,11 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
   double bgreedy=(get_param_i("hungarian_greedy")==1);
 
 	if (bverbose)
-		*gout<<"Path matching"<<std::endl;
+		*gout<<"Seeded Path matching"<<std::endl;
 	if (bverbose) {
 
 		*gout<<"this_m: "<< this->m <<std::endl; //
-		*gout<<"m_seeds: "<<m_seeds<<std::endl; //
+
 	}
 	//some duplicate variables
 	gsl_matrix* gm_Ag_d=g.get_descmatrix(cdesc_matrix);
@@ -88,9 +88,10 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 		for (int j=0;j<N;j++){
 			gsl_matrix_set(gm_Delta,i,j,pow(gsl_matrix_get(gm_Lg_d,i,i)-gsl_matrix_get(gm_Lh_d,j,j),2));
 		};
+	nonseededGradtoseededGrad(gm_Delta,m);
 	gsl_matrix_transpose(gm_Delta);
 	gsl_matrix_scale(gm_Delta,1-dalpha_ldh);
-	
+
 
 	gsl_vector_view gvv_Delta=gsl_vector_view_array(gm_Delta->data,N*N);
 	//memory allocation
@@ -114,11 +115,15 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	if (gm_P_i==NULL){
 		gsl_matrix_set_all(gm_P,1.0/(N-m));
 		if (m > 0) {
-			nonseededPtoseededP(gm_P,m);
+			nonseededPtoseededP(gm_P,this->m);
 		}
 	}
-	else
+	else {
 		gsl_matrix_memcpy(gm_P,gm_P_i);
+	    if (m > 0) {
+			nonseededPtoseededP(gm_P,this->m);
+		}
+	}
 
         //perm matrix transformation into vector
 	gvv_P=gsl_vector_view_array(gm_P->data,N*N);
@@ -133,6 +138,9 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	//extern cycle over dlambda_cvcc
 	//some temp variables
 	gsl_matrix* gm_Delta_tmp=gsl_matrix_alloc(N,N);
+
+
+
 	gsl_matrix_memcpy(gm_Delta_tmp,gm_Delta);
 	//temp variables to trace the best solution along the algorithm path
 	gsl_matrix* gm_P_bp_temp=NULL;
@@ -167,7 +175,9 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	gsl_matrix_memcpy(gm_Delta,gm_Delta_tmp);
 
 	gsl_matrix_scale(gm_Delta,1-dlambda);
+	//remove df_norm
 	gsl_matrix_scale(gm_Delta,1/df_norm);
+
 
 	//linear term due to label similarities
 	if (dalpha_ldh>0){
@@ -180,19 +190,27 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	//main optimization cycle
 	int icounter=0;
 	ddP_norm=1;
-	df_value_old=f_qcvqcc(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,gm_Delta,gm_P_prev,dlambda,gm_temp,gm_temp2);
+	df_value_old=sgm_algorithm_spath::f_qcvqcc(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,gm_Delta,gm_P_prev,dlambda,gm_temp,gm_temp2);
 	while(!bstop_algo)
 	{
 	dt0=clock();
 	//the default gsl representation is made by rows
 	//gradient estimation: Agh*P, Here instead of P we have to use gvv_P_prev.
 	if (pdebug.ivalue) gsl_matrix_printout(&gvv_P_prev.vector,"gvv_P_prev",pdebug.strvalue);
-	qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_P_prev.vector,gv_C,dlambda,gv_temp);
+	sgm_algorithm_spath::qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_P_prev.vector,gv_C,dlambda,gv_temp);
 	if (pdebug.ivalue) gsl_matrix_printout(gv_C,"gv_C",pdebug.strvalue);
 	//scaling without minus because before we have changed the Lghsign and Delta substraction
 	//also we do not need to transpose Delta
 	gsl_matrix_scale(C,2);
+
 	gsl_matrix_sub(C,gm_Delta);
+  //C now has a gradient in in nonchanging P
+  //nonseededGradtoseededGrad(C,m);
+
+	gsl_matrix_view C_sub = gsl_matrix_submatrix(C,m,m,N-m,N-m);
+	//gsl_matrix_view delta_sub = gsl_matrix_submatrix(gm_Delta,m,m,N-m,N-m);
+	//gsl_matrix_sub(&C_sub.matrix,&delta_sub.matrix);
+
 
 	//debug trace
 	if (pdebug.ivalue) gsl_vector_set(gv_debug_trace,0,gsl_vector_get(gv_debug_trace,0)+1);
@@ -214,17 +232,23 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	gsl_matrix_transpose(C);
 	dt1=clock();
 	// constrain gm_P to be seeded by solving the hungarian problem with the nonseeded portion of gradient.
-	
-	gsl_matrix_view C_sub = gsl_matrix_submatrix(C,m,m,N-m,N-m);
+
+
 	nonseededPtoseededP(gm_P, m);
 	gsl_matrix_view gm_P_sub = gsl_matrix_submatrix(gm_P,m,m,N-m,N-m);
+
+
+
 	gsl_matrix_hungarian(&C_sub.matrix, &gm_P_sub.matrix,NULL,NULL,false,(bblast_match?gm_ldh:NULL),bgreedy);
 	dt2=clock();
+	if (pdebug.ivalue) gsl_matrix_printout(&gm_P_sub.matrix,"gm_P_sub",pdebug.strvalue);
+	if (pdebug.ivalue) gsl_matrix_printout(&C_sub.matrix,"C_sub",pdebug.strvalue);
 	gsl_matrix_transpose(C);
 	gsl_matrix_scale(C,1/dscale_factor);
 
 	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue);
 	if (pdebug.ivalue) gsl_matrix_printout(gm_P_prev,"gm_P_prev",pdebug.strvalue);
+
 	//line search
 	gsl_matrix_memcpy(gm_dP,gm_P);
 	gsl_matrix_sub(gm_dP,gm_P_prev);
@@ -233,15 +257,22 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 
 	double a,b1,b2,b3;
 	//transpose all matrices but not Delta
+	nonseededGradtoseededGrad(gm_dP,m);
 	gsl_matrix_transpose(gm_dP);
 	gsl_matrix_transpose(gm_P_prev);
 	gsl_matrix_transpose(C);
+
 	gsl_matrix_add(C,gm_Delta);//return to the original C for line search
+
+	//gsl_matrix_add(&C_sub.matrix,&delta_sub.matrix);
+
 	gsl_vector_scale(gv_C,0.5);
 	gsl_blas_ddot(&gvv_dP.vector,gv_C,&b1);
 	gsl_blas_ddot(&gvv_dP.vector,&gvv_Delta.vector,&b3);
-	//gsl_blas_dgemv(CblasNoTrans,1,gm_Lgh,&gvv_dP.vector,0,gv_temp);
+
+	//gsl_blas_dgemv(CblasNoTrans,lambda,gm_Lgh,&gvv_dP.vector,0,gv_temp);
 	gsl_matrix_transpose(gm_dP);
+	// Do not understand the stepsize computation because does not make sense to me
 	qcvqcc_gradient(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,&gvv_dP.vector,gv_temp,dlambda,gv_temp2);
 	if (pdebug.ivalue) gsl_matrix_printout(gm_temp,"gm_temp",pdebug.strvalue);
 	gsl_matrix_transpose(gm_dP);
@@ -253,12 +284,24 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	gsl_matrix_transpose(gm_dP);
 	gsl_matrix_transpose(gm_P_prev);
 	gsl_matrix_transpose(C);
-	df_value=f_qcvqcc(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,gm_Delta,gm_P,dlambda,gm_temp,gm_temp2);
+	df_value=sgm_algorithm_spath::f_qcvqcc(gm_Ag_d,gm_Ah_d,gm_Lg_d,gm_Lh_d,gm_Delta,gm_P,dlambda,gm_temp,gm_temp2);
 
+	gsl_matrix *a_mat = gsl_matrix_alloc(1,1);
+	gsl_matrix_set_all(a_mat,a);
+
+	if (pdebug.ivalue) gsl_matrix_printout(a_mat,"a_quadratic",pdebug.strvalue);
 	if (a>0)//projection is convex
 	{
 		double alpha = -b1/(2*a);
-
+		gsl_matrix *alpha_mat = gsl_matrix_alloc(1,1);
+		gsl_matrix_set_all(alpha_mat,alpha);
+		if (pdebug.ivalue) gsl_matrix_printout(alpha_mat,"alpha",pdebug.strvalue);
+		gsl_matrix *b1_mat = gsl_matrix_alloc(1,1);
+		gsl_matrix_set_all(b1_mat,b1);
+		if (pdebug.ivalue) gsl_matrix_printout(b1_mat,"b_1",pdebug.strvalue);
+		if (alpha >1) {
+			alpha = 1.0 ;
+		}
 		if ((alpha<1) and (alpha>0))
 			{
 				gsl_matrix_scale(gm_dP,(1-alpha));
@@ -276,6 +319,8 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 			{gsl_matrix_memcpy(gm_P,gm_P_prev);
 			 df_value=df_value_old;};
 	};
+
+
 	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P_step_finish",pdebug.strvalue);
 
 
@@ -372,6 +417,8 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 		if (dlambda==0){ //concave function
 			binc_lambda=false;dlambda_M_c=1;
 				};
+
+		if (bverbose) *gout<<"lambda_fix="<<dlambda<<", dl_add="<<dlambda_add<<std::endl;
 		gsl_matrix_memcpy(gm_P_prev,gm_P_lambda);
 	}
 	else
@@ -427,7 +474,7 @@ match_result sgm_algorithm_spath::match_with_seeds(graph& g, graph& h, gsl_matri
 	};
 	if (dlambda_add<dlambda_min)
 		dlambda_add=dlambda_min;
-	//std::cout<<"lambda="<<dlambda<<", dl_add="<<dlambda_add<<std::endl;
+	if (bverbose) *gout<<"lambda="<<dlambda<<", dl_add="<<dlambda_add<<std::endl;
 	bstop_algo=false;
 	};//end pathway cycle
 	match_result mres;
@@ -527,6 +574,7 @@ void sgm_algorithm_spath::qcc_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah
 	gsl_matrix_transpose(gm_temp);
 
 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,2*dmult*(1-dalpha_ldh)/df_norm,gm_Ag_d,gm_temp,1,&gmv_grad.matrix);
+	//gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,2*dmult*(1-dalpha_ldh),gm_Ag_d,gm_temp,1,&gmv_grad.matrix);
 
 
 	//Grad' += 2*(1-dlambda)*(1-dalpha_ldh)/df_norm(Ag^2+Ah^2)*Lg* I \directsum P_n *Lh'
@@ -540,6 +588,8 @@ void sgm_algorithm_spath::qcc_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah
 // Note: returns  the transpose of gradient
 void sgm_algorithm_spath::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_vector* gv_P,  gsl_vector* gv_grad, gsl_matrix * gm_temp)
 {
+
+
 	// This block computes 1st term of convex component  in 3.5.2  of TPAMI paper
 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
 	gsl_matrix *gm_1=gsl_matrix_alloc(N,N);
@@ -600,6 +650,7 @@ void sgm_algorithm_spath::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah
   //  gmv_grad <- \Grad'
 	gsl_matrix_transpose(&gmv_grad.matrix);
 	gsl_matrix_scale(&gmv_grad.matrix,1-dalpha_ldh);//label cost function scaling
+	//remove df_norm
 	gsl_vector_scale(gv_grad,1/df_norm);//normalization
 	nonseededGradtoseededGrad(&gmv_grad.matrix,m);
 
@@ -709,6 +760,7 @@ double sgm_algorithm_spath::f_qcv(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_ma
 	//gsl_blas_dgemm_sym(CblasLeft,CblasUpper,CblasTrans,CblasTrans,-1,gm_Ah_d,gm_P,1,gm_temp);
 	double dres= pow(gsl_matrix_norm(gm_temp,2),2);
 	dres=dres*(1-dalpha_ldh);
+	//remove df_norm
 	dres/=df_norm;
 	if ((bqcv) and (dalpha_ldh>0))//if just QCV optimization then alpha_ldh must be integrated, in QCVQCC and P cases we use Delta for these purposes
 	{gsl_vector_view gvv_ldh=gsl_vector_view_array(gm_ldh->data,N*N);
@@ -749,6 +801,7 @@ double sgm_algorithm_spath::f_qcc(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl_ma
 		dconst_add+=gsl_matrix_get(gm_temp2,i,i);
 	dres+=dconst_add;
 	dres=dres*(1-dalpha_ldh);
+	//remove df_norm
 	dres/=df_norm;
 	return dres;
 }
