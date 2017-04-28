@@ -8,7 +8,7 @@ Description: This is a wrapper package for the graph matching library GraphM. Th
 License: GPL-2
 LazyData: TRUE
 Imports:
-    Rcpp (>= 0.12.6)
+    Rcpp (>= 0.12)
 LinkingTo:
     Rcpp,RcppGSL
 NeedsCompilation: yes
