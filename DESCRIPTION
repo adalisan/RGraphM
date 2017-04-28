@@ -9,6 +9,7 @@ License: GPL-2
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12)
+    RcppGSL (>= 0.3)
 LinkingTo:
     Rcpp,RcppGSL
 NeedsCompilation: yes
