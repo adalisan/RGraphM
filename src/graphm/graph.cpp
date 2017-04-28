@@ -78,7 +78,7 @@ case 'A':case 'a':
 	set_adjmatrix(gm_A_l);
 	gsl_matrix_free(gm_A_l);
 	};
-	if (ierror!=0){ printf("Error: graph adjacency matrix is not correctly defined \n");
+	if (ierror!=0){ //printf("Error: graph adjacency matrix is not correctly defined \n");
 		throw std::runtime_error("Error: graph adjacency matrix is not correctly defined \n");}
 	break;
  };

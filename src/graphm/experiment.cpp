@@ -115,7 +115,8 @@ void experiment::run_experiment(graph &g, graph &h)
 		int ierror=gsl_matrix_fscanf(f,gm_ldh);
 		fclose(f);
 		gsl_set_error_handler(NULL);
-		if (ierror!=0){ printf("Error: C_matrix is not correctly defined \n");
+		if (ierror!=0){ //printf("Error: C_matrix is not correctly defined \n");
+		    *gout<<"Error: C_matrix is not correctly defined "<<std::endl;
 			throw std::runtime_error("Error: C_matrix is not correctly defined \n");};
 		}
 	else
