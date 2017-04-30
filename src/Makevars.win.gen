@@ -5,12 +5,16 @@
 RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
 #RCPPGSL_CFLAGS
 PKG_CPPFLAGS = $(GSL_CFLAGS) -I"$(LIB_GSL)\include" -I../inst/include  -I../inst -Wall -Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare  -pedantic -pthread -fPIC -O2 -g
-
-
+ARCH= `arch`
+ifeq ( $(ARCH), 'i386' )
+ARCH= i386
+else
+ARCH= x64
+endif
 GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
 GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
 #PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L"$(LIB_GSL)\lib\x64" -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
-PKG_LIBS = $(LDFLAGS) -L"$(LIB_GSL)\lib\x64" -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
+PKG_LIBS = $(LDFLAGS) -L"$(LIB_GSL)\lib\$(ARCH)" -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
 CXX ?= g++
 SHVER= 1
