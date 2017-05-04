@@ -77,9 +77,9 @@ ALLFILES: $(OBJECTS) $(GRAPHM_OBJ_REL) ../inst/libgraphm.a
 
 clean: cleana cleanb
 
-cleana: $(OBJECTS)
+cleana:
 	rm $(OBJECTS)
-cleanb: $(GRAPHM_OBJ_REL)
-	rm graphm/$(GRAPHM_OBJ_REL)
+cleanb:
+	rm $(GRAPHM_OBJ_REL)
 
 #.PHONY: all test clean
