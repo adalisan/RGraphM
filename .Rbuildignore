@@ -1,3 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.vscode$
+^/src/graphm/\.vscode$
 README
+PATH
+^bak$

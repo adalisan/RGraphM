@@ -48,6 +48,8 @@ const graph& graph::operator=(graph& gh){
 if (&gh!=this)
 {
 	set_adjmatrix(gh.get_adjmatrix());
+} else {
+	return ((const graph &)*this);
 }
 }
 //graph loading from txt file
@@ -151,6 +153,7 @@ for (int i=0;i<gm_A->size1;i++)
 		fout<<" "<<gsl_matrix_get(gm_A,i,j);
 	fout<<std::endl;
 }
+return 0;
 }
 
 void graph::printdot(std::string fname_out,gsl_matrix* gm_P)
