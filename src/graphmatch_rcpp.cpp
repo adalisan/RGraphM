@@ -14,8 +14,9 @@
 #include <gsl/gsl_permutation.h>
 
 #include "graphm/graph.h"
-#include "graphm/experiment.h"
 #include "graphm/algorithm.h"
+#include "graphm/experiment.h"
+
 
 using namespace std;
 using namespace Rcpp;

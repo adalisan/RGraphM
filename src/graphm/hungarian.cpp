@@ -102,14 +102,13 @@ int hungarian_init(hungarian_problem_t* p, int** cost_matrix, int rows, int cols
   }
   else if (mode == HUNGARIAN_MODE_MINIMIZE_COST) {
     /* nothing to do */
-  }
-  else {
+  }  else {
   	//printf("hungarian.cpp: unknown mode. Mode was set to HUNGARIAN_MODE_MINIMIZE_COST !\n");
   	//should really print a message that is R -friendly without including R/Rcpp headers
-  }
+  };
 
 
-  	//mexPrintf("%s: unknown mode. Mode was set to HUNGARIAN_MODE_MINIMIZE_COST !\n");
+  //mexPrintf("%s: unknown mode. Mode was set to HUNGARIAN_MODE_MINIMIZE_COST !\n");
 
   return rows;
 }

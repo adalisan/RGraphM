@@ -4,10 +4,9 @@
 # combine with standard arguments for R
 
 #RCPPGSL_CFLAGS
-PKG_CPPFLAGS = $(GSL_CFLAGS) -I"$(LIB_GSL)/include" -I"$(LIB_GSL)/include/gsl" -I../inst/include  -I../inst  -Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated -pedantic -pthread -fPIC -O2 -g
-
+PKG_CPPFLAGS = $(GSL_CFLAGS) -I"$(LIB_GSL)/include" -I"$(LIB_GSL)/include/gsl" -I../inst/include  -I../inst -Wall -Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare  -pedantic -pthread -fPIC -O2 -g
 ARCH=x64
-ifeq "$(WIN)" "64"
+ifeq "$(WIN)" "i386"
 ARCH= i386
 else
 ARCH= x64

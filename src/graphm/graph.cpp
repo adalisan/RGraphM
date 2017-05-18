@@ -45,12 +45,10 @@ graph::graph(graph & gr):rpc()
 
 
 const graph& graph::operator=(graph& gh){
-if (&gh!=this)
-{
+	if (&gh!=this) {
 	set_adjmatrix(gh.get_adjmatrix());
-} else {
+	}
 	return ((const graph &)*this);
-}
 }
 //graph loading from txt file
 int graph::load_graph(std::string fgraph_name,char ftype,char cformat,std::string fvertexlst_name)

@@ -1,7 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.vscode$
-^/src/graphm/\.vscode$
+^bak$
 README
 PATH
-^bak$
+cran-comments.md
