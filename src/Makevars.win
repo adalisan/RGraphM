@@ -4,7 +4,7 @@
 # combine with standard arguments for R
 
 #RCPPGSL_CFLAGS
-PKG_CPPFLAGS = $(GSL_CFLAGS) -I"$(LIB_GSL)/include" -I"$(LIB_GSL)/include/gsl" -I../inst/include  -I../inst -Wall -Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated -pedantic -pthread -fPIC -O2 -g
+PKG_CPPFLAGS = $(GSL_CFLAGS) -I"$(LIB_GSL)/include" -I"$(LIB_GSL)/include/gsl" -I../inst/include  -I../inst  -Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated -pedantic -pthread -fPIC -O2 -g
 
 ARCH=x64
 ifeq "$(WIN)" "64"
@@ -77,11 +77,11 @@ ALLFILES: $(OBJECTS) $(GRAPHM_OBJ_REL) ../inst/libgraphm.a
 	ar -rvs ../inst/libgraphm.a $(GRAPHM_OBJ_REL)
 
 
-clean: cleana cleanb
+clean: cleanb
 
-cleana:
-	rm $(OBJECTS)
+#cleana:
+#	rm $(OBJECTS)
 cleanb:
-	rm $(GRAPHM_OBJ_REL)
+	rm -f $(addprefix ./src/,$(GRAPHM_OBJ_REL))
 
 #.PHONY: all test clean
