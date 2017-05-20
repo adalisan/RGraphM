@@ -1,5 +1,7 @@
 \name{graph_data}
 \alias{graph_data}
+\alias{a}
+\alias{b}
 \docType{data}
 \title{
 Two randomly shuffled isomorphic graphs

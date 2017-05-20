@@ -5,3 +5,4 @@
 README
 ^PATH$
 ^bak$
+^cran-comments\.md$

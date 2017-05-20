@@ -83,5 +83,6 @@ clean: cleanb
 #	rm $(OBJECTS)
 cleanb:
 	rm -f $(addprefix ./src/,$(GRAPHM_OBJ_REL))
+	rm -f $(GRAPHM_OBJ_REL)
 
 #.PHONY: all test clean
