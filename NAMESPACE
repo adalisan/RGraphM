@@ -1,4 +1,4 @@
-useDynLib(RGraphM)
+useDynLib(RGraphM,.registration = TRUE)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
 
