@@ -12,8 +12,6 @@ a and b are adjacency matrices from the test_simple example in graphm library.
 \format{
 
   \describe{
-    \item{\code{A}}{an 15x15  adjacency matrix representing graph G to be matched}
-    \item{\code{B}}{an 15x15 adjacency matrix representing graph H to be matched}
     \item{\code{a}}{an 10x10 adjacency matrix representing graph G to be matched}
     \item{\code{b}}{an  10x10 adjacency matrix representing graph H to be matched}
   }
@@ -22,8 +20,8 @@ a and b are adjacency matrices from the test_simple example in graphm library.
 \examples{
 print (a)
 print (b)
-print (A)
-print (B)
+
+
 ## maybe str(graph_data) ; plot(graph_data) ...
 }
 \keyword{datasets}
