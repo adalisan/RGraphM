@@ -3,5 +3,5 @@
 ^\.vscode$
 ^/src/graphm/\.vscode$
 README
-PATH
+^PATH$
 ^bak$
