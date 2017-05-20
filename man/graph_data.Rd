@@ -1,5 +1,4 @@
 \name{graph_data}
-\alias{graph_data}
 \alias{a}
 \alias{b}
 \docType{data}
@@ -10,7 +9,7 @@ Two randomly shuffled isomorphic graphs
 A and B are randomly generated adjacency matrices as shown in the example of run_graph_match function.
 a and b are adjacency matrices from the test_simple example in graphm library.
 }
-\usage{data("graph_data")}
+
 \format{
 
   \describe{
