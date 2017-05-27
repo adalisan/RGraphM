@@ -100,11 +100,12 @@ print( algorithm_params)
  algorithm_params["alpha_ldh"] <- 0.44
  anotherresult <- run_graph_match(a,b, algorithm_params)
 
-C<-matrix( runif(	min = 0, max = 1,n= 225),15,15)
-diag(C)<- 1
-B <- C*B
-perm <- sample.int(15)
-A<-B [perm,perm]
-weightedmatrixresult <- run_graph_match(A,B, algorithm_params)
+#Example for matching weighted graphs. Disabled to reduce elapsed time for R check
+#C<-matrix( runif(	min = 0, max = 1,n= 225),15,15)
+#diag(C)<- 1
+#B <- C*B
+#perm <- sample.int(15)
+#A<-B [perm,perm]
+#weightedmatrixresult <- run_graph_match(A,B, algorithm_params)
 
 }

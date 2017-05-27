@@ -1,5 +1,5 @@
-useDynLib(RGraphM,.registration = TRUE)
+useDynLib(RGraphM,.registration = TRUE, .fixes = "RGraphM_")
 importFrom(Rcpp, evalCpp)
-exportPattern("^[[:alpha:]]+")
+export("run_graph_match")
 
 

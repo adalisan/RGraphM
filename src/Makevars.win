@@ -83,7 +83,8 @@ cleanb:
 	rm -f *.o
 	rm -f *.dll
 	rm -f src/*.dll
-	rm -f src$(ARCH)/*.o
-	rm -f src$(ARCH)/*.dll
+	rm -f src-$(ARCH)/*.o
+	rm -f src-$(ARCH)/*.dll
+	rm -f graphm/*.o
 
 #.PHONY: all test clean
