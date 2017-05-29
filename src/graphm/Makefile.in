@@ -42,3 +42,4 @@ all: ./bin/graphm
 
 clean:
 	rm -f ./*o
+	rm -f ./bin/graphm
