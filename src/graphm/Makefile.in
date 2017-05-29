@@ -1,5 +1,5 @@
 CXX ?= g++
-CFLAGS = -Wno-deprecated -O3 -fPIC @GSL_CFLAGS@/gsl
+CFLAGS = -O3 -fPIC @GSL_CFLAGS@/gsl
 #LDFLAGS= -lgsl -lgslcblas
 SHVER = 1
 all: ./bin/graphm 
