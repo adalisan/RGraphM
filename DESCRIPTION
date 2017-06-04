@@ -8,8 +8,8 @@ Description: This is a wrapper package for the graph matching library 'graphm'. 
 License: GPL-2
 LazyData: TRUE
 Imports:
-    Rcpp (>= 0.12),
-    RcppGSL (>= 0.3)
+  Rcpp (>= 0.12),
+  RcppGSL (>= 0.3)
 LinkingTo:
     Rcpp,RcppGSL
 NeedsCompilation: yes
