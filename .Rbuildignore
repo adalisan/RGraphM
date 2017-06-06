@@ -6,3 +6,4 @@ README
 ^PATH$
 ^bak$
 ^cran-comments\.md$
+^.travis.yml$
