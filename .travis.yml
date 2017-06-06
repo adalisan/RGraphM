@@ -9,4 +9,4 @@ r:
 
 before_install:
   - tlmgr install index  
-  - apt-get install -y libgsl0-dev libgsl0ldbl
+  - sudo apt-get install -y libgsl0-dev libgsl0ldbl
