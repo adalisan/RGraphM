@@ -93,9 +93,10 @@ print( algorithm_params)
 
 #Example for matching weighted graphs. Disabled to reduce elapsed time for R check
 if (FALSE){
+  
 
 
- algorithm_params["algo"]<- "I U RANK QCV rand PATH"
+ algorithm_params["algo"]<- "IDEN UMEY RANK QCV RAND PATH  CA"
  algorithm_params["algo_init_sol"] <- "unif unif unif unif unif unif"
  algorithm_params["alpha_ldh"] <- 0.44
  anotherresult <- run_graph_match(a,b, algorithm_params)
