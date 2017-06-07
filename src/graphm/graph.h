@@ -70,7 +70,7 @@ int gsl_matrix_printout(const gsl_matrix * gm,std::string,std::string);
 int gsl_matrix_printout(gsl_vector * gv,std::string,std::string);
 int gsl_matrix_printout(gsl_permutation * gv,std::string,std::string);
 int gsl_matrix_printout(std::string sout,std::string );
-double abs(double);
+double abs_d(double);
 void gsl_matrix_sum(gsl_matrix* A,int idim,gsl_vector* gv_res);
 double gsl_matrix_sum(gsl_matrix* A);
 double gsl_matrix_max_abs(gsl_matrix* A);

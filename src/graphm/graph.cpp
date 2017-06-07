@@ -48,7 +48,7 @@ const graph& graph::operator=(graph& gh){
 if (&gh!=this)
 {
 	set_adjmatrix(gh.get_adjmatrix());
-} 
+}
 	return (*this);
 
 }
@@ -237,7 +237,7 @@ double gsl_matrix_norm(const gsl_matrix* gm,double p)
 	double res=0;
 	for (int i=0;i<gm->size1;i++)
 		for (int j=0;j<gm->size2;j++)
-			res+=pow(abs(gsl_matrix_get(gm,i,j)),p);
+			res+=pow(abs_d(gsl_matrix_get(gm,i,j)),p);
 	res=pow(res,(1/p));
 	return res;
 }
@@ -246,7 +246,7 @@ int gsl_matrix_abs(gsl_matrix* gm)
 {
 	for (int i=0;i<gm->size1;i++)
 		for (int j=0;j<gm->size2;j++)
-			gsl_matrix_set(gm,i,j,abs(gsl_matrix_get(gm,i,j)));
+			gsl_matrix_set(gm,i,j,abs_d(gsl_matrix_get(gm,i,j)));
 	return 0;
 }
 //formated matrix print
@@ -291,7 +291,7 @@ fout<<sout<<sout<<std::endl;
 return 0;
 }
 //abs function for doubles
-double abs(double x)
+double abs_d(double x)
 {return (x>0)?x:-x;}
 double min(double x1,double x2)
 {return (x1>x2)?x2:x1;}
@@ -330,8 +330,8 @@ double gsl_matrix_sum(gsl_matrix* gm_A)
 
 double gsl_matrix_max_abs(gsl_matrix* A)
 	{
-		double dmin=abs(gsl_matrix_min(A));
-		double dmax=abs(gsl_matrix_max(A));
+		double dmin=abs_d(gsl_matrix_min(A));
+		double dmax=abs_d(gsl_matrix_max(A));
 		return (dmin>dmax)?dmin:dmax;
 	};
 double gsl_matrix_min(gsl_matrix* gm,double ic)//minimum greater than ic
@@ -350,7 +350,7 @@ double gsl_matrix_min_abs(gsl_matrix* gm)
 	double dres=gm->data[0];
 	for (int i=0;i<gm->size1;i++)
 		for (int j=0;j<gm->size2;j++)
-			dres=(dres<abs(gm->data[i*gm->size2+j]))?dres:abs(gm->data[i*gm->size2+j]);
+			dres=(dres<abs_d(gm->data[i*gm->size2+j]))?dres:abs_d(gm->data[i*gm->size2+j]);
 
 	return dres;
 }
@@ -360,7 +360,7 @@ long gsl_numnonzero(gsl_matrix * gm_A,double deps)
 long Nz=0;
 for (int i=0;i<gm_A->size1;i++)
 	for (int j=0;j<gm_A->size2;j++)
-		if (abs(gm_A->data[i*gm_A->size1+j])>deps)
+		if (abs_d(gm_A->data[i*gm_A->size1+j])>deps)
 			Nz++;
 return Nz;
 }
