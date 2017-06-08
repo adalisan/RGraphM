@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 GSL_CFLAGS=`${R_HOME}/bin/Rscript -e "require(RcppGSL);RcppGSL:::CFlags()"`
 GSL_LIBS=`${R_HOME}/bin/Rscript -e "require(RcppGSL);RcppGSL:::LdFlags()"`
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
