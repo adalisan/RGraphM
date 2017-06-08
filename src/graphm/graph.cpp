@@ -369,7 +369,7 @@ return Nz;
 /*!
     \fn graph::getN()
  */
-long long graph::getN()
+long graph::getN()
 {
     return N;
 }

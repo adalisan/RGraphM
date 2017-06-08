@@ -99,7 +99,7 @@ double algorithm::graph_dist(graph &g,graph &h,gsl_matrix* gm_P,char cscore_matr
 	parameter pdebug = get_param("debugprint");
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
-	long long N=g.getN();
+	long N=g.getN();
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_At=gsl_matrix_alloc(N,N);
 	gsl_matrix* gm_Ah=gsl_matrix_alloc(N,N);

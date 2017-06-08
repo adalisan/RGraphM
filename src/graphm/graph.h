@@ -57,10 +57,10 @@ public:
     void printdot(std::string fname_out, gsl_matrix* =NULL);
     ~graph();
     int add_dummy_nodes(int id);
-    long long getN();
+    long getN();
 protected:
     gsl_matrix* gm_A;//adjacency matrix
-    long long N;
+    long N;
 };
 double gsl_matrix_norm(const gsl_matrix* gm,double p);
 int gsl_matrix_abs(gsl_matrix* gm);

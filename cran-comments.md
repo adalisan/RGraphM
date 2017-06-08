@@ -2,6 +2,9 @@
 
 
 ## R CMD check results
+Windows 7 x64 R 3.3.1
+* using R version 3.3.1 (2016-06-21)
+* using platform: x86_64-w64-mingw32 (64-bit)
 
 * Windows 10 x64 , R 3.4.0
 * For Windows 7 x64
