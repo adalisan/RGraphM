@@ -52,7 +52,7 @@ Experiment class. It implements all extern routines for graph matching experimen
 class experiment : public rpc
 {
 public:
-    experiment(std::string fconfig="config.txt"):rpc(fconfig){};
+    experiment(std::string fconfig="config.txt"):rpc(fconfig) {};
     void run_experiment();
     void run_experiment(graph &g,graph &h);
     ~experiment();

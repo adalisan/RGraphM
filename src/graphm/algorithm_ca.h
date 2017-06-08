@@ -29,7 +29,7 @@ C-adaptation graph matching algorithm
 class algorithm_ca : public algorithm_qcv
 {
 public:
-    virtual match_result match(graph &g,graph &h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);
+    virtual match_result match(graph &g, graph &h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);
 
 
 };
