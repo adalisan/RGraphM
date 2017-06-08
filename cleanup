@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 rm -f src/Makevars
 rm -f src/graphm/graphm
 rm -f src/graphm/Makefile
