@@ -1,14 +1,20 @@
 ## Test environments
-* CentOS 6 , R 3.2.3
-* Windows 10 , R 3.4.0
+
+
 ## R CMD check results
 
-For Windows
-Status:  1 NOTE
-new submission
+* Windows 10 x64 , R 3.4.0
+* For Windows 7 x64
+Status:  0 ERROR, 0 WARNINGs, 0 NOTEs
 
-For Linux 
-Status: 0 ERROR, 0 WARNINGs, 4 NOTEs
+* For Linux 
+* Ubuntu 12.04.5
+r stable
+Status: 0 ERROR, 0 WARNINGs, 0 NOTEs
+
+r oldrelease : 0 ERROR, 0 WARNINGs, 0 NOTEs
+
+r-devel 2017-06-07 r72771: : 0 ERROR, 0 WARNINGs, 0 NOTEs
 
 This package assumes that the GSL library is installed and the environment variable LIB_GSL points to its location. For windows, pre-built libraries are available at [Rtools extras](https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/)
 follow the instructions in this [stackoverflow comment](https://stackoverflow.com/a/23666023/394963)
