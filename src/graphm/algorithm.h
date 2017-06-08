@@ -86,7 +86,7 @@ protected:
     bool bverbose;
     std::string sverbfile;
     std::ofstream fverbose;
-    long long N;
+    long N;
     double df_norm;
     bool bnosymm;
 
