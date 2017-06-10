@@ -68,7 +68,7 @@ void experiment::run_experiment(graph &g, graph &h)
     //used algorithms
     std::string sexp_type=get_param_s("exp_type");
     std::string salgo_match=get_param_s("algo");
-    std::istrstream istr(salgo_match.c_str());
+    std::stringstream istr(salgo_match.c_str());
     std::vector<std::string> v_salgo_match;
     std::string stemp;
     std::stringstream counter;
@@ -76,7 +76,7 @@ void experiment::run_experiment(graph &g, graph &h)
         v_salgo_match.push_back(stemp);
     //used initialization algorithms
     std::string salgo_init=get_param_s("algo_init_sol");
-    std::istrstream istrinit(salgo_init.c_str());
+    std::stringstream istrinit(salgo_init.c_str());
     std::vector<std::string> v_salgo_init;
     while (istrinit>>stemp)
         v_salgo_init.push_back(stemp);

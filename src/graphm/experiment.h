@@ -37,7 +37,7 @@
 #include "algorithm_path.h"
 #include "algorithm_ca.h"
 #include "algorithm_ext.h"
-#include <strstream>
+#include <sstream>
 #include <stdexcept>
 #include <exception>
 #include <string>

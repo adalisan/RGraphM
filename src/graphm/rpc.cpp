@@ -178,9 +178,9 @@ int rpc::load_config()
 //config file processing
 int rpc::read_config(std::string sparams)
 {
-        sconfig=sparams;
-        std::replace( sparams.begin(), sparams.end(),';', '\n' );
-	std::istrstream fconfig(sparams.c_str());
+  sconfig=sparams;
+  std::replace ( sparams.begin(), sparams.end(),';', '\n' );
+	std::istringstream fconfig(sparams.c_str());
 	//assure(fconfig,fname_config.c_str());
 	char buf[200];
 	while (fconfig.getline(buf,200))
