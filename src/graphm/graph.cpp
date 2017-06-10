@@ -133,7 +133,7 @@ int graph::add_dummy_nodes(int id)
 	set_adjmatrix(gm_A_new);
 	gsl_matrix_free(gm_A_new);
 	return 0;
-};
+}
 
 int graph::set_adjmatrix(const gsl_matrix *_gm_A)
 {
@@ -359,7 +359,7 @@ double gsl_matrix_max_abs(gsl_matrix *A)
 	double dmin = abs_d(gsl_matrix_min(A));
 	double dmax = abs_d(gsl_matrix_max(A));
 	return (dmin > dmax) ? dmin : dmax;
-};
+}
 double gsl_matrix_min(gsl_matrix *gm, double ic) //minimum greater than ic
 {
 	double dres = ic - 1;

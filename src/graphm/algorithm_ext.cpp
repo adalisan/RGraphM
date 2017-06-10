@@ -41,4 +41,4 @@ mres.gm_P_exact=NULL; //you can save here the matrix which was used as an approx
 
 mres.dres=graph_dist(g,h,mres.gm_P,cscore_matrix);// distance between graph adjacency matrices
 return mres;
-};
+}
