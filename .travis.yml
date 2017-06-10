@@ -10,3 +10,7 @@ r:
 before_install:
   - tlmgr install index  
   - sudo apt-get install -y libgsl0-dev libgsl0ldbl
+  
+  
+after_install:
+   - cat /home/travis/build/adalisan/RGraphM/RGraphM.Rcheck/00install.log
