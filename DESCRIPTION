@@ -4,7 +4,7 @@ Title: Graph Matching Library for R
 Version: 0.1.5
 Author: Sancar Adali
 Maintainer: Sancar Adali <sancar.adali@gmail.com>
-Description: This is a wrapper package for the graph matching library 'graphm'. The original 'graphm' C/C++ library can be found in <http://cbio.mines-paristech.fr/graphm/> . Latest version ( 0.52 ) of this library is slightly modified to fit 'Rcpp' usage and include in the source package.
+Description: This is a wrapper package for the graph matching library 'graphm'. The original 'graphm' C/C++ library can be found in <http://cbio.mines-paristech.fr/graphm/> . Latest version ( 0.52 ) of this library is slightly modified to fit 'Rcpp' usage and included in the source package. The development version of the package is also available at <https://github.com/adalisan/RGraphM>
 License: GPL-2
 LazyData: TRUE
 Imports:
