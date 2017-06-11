@@ -69,7 +69,7 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
 
 
      debug_out << " \n ";
-  	  	for( int i=0; i < tmp_str.length(); i++ ){
+  	  	for( unsigned int i=0; i < tmp_str.length(); i++ ){
   	  		debug_out << "i is: " << i << ", the element value is: " << tmp_str[i];
   	  		debug_out << "\n";
   	  	}
@@ -90,7 +90,7 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	string str(as<string>(algorithm_params["algo"]));
   	string buf; // Have a buffer string
   	stringstream ss(str); // Insert the string into a stream
-  	; // Create vector to hold our words
+  	 // Create vector to hold our words
 
   	while (ss >> buf)
   		algo_list.push_back(buf);
@@ -149,8 +149,8 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
    			}
 
    			try{
-   				for (int j =0 ; j< P_tmp.nrow(); j++){
-   					for (int k =0 ; k< P_tmp.ncol(); k++){
+   				for (unsigned int j = 0 ; j < P_tmp.nrow(); j++){
+   					for (unsigned int k = 0 ; k < P_tmp.ncol(); k++){
    						P(j,k) = P_tmp(j,k);
    						if (P(j,k)==1) {
    							Pv_tmp[j]=k+1;
