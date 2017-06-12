@@ -10,15 +10,15 @@ PKG_CPPFLAGS = $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst
 #-pthread  -O2 -g
 
 
+
 GRAPHM_OBJ =  ./algorithm_ca.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o
 GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
 #PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
-CXX ?= g++
 SHVER= 1
 VPATH= ./graphm:./graphm-0.52
-
+CXX = @CC@
 
 SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
 OBJECTS= $(SOURCES:.cpp=.o) RGraphM_init.o $(GRAPHM_OBJ_REL)

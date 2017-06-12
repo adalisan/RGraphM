@@ -1,10 +1,17 @@
 #!/usr/bin/env sh
 GSL_CFLAGS=`${R_HOME}/bin/Rscript -e "require(RcppGSL);RcppGSL:::CFlags()"`
 GSL_LIBS=`${R_HOME}/bin/Rscript -e "require(RcppGSL);RcppGSL:::LdFlags()"`
+CC=`"${R_HOME}/bin/R" CMD config CC`
+CPP=`"${R_HOME}/bin/R" CMD config CPP`
+CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
+CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
+-e "s|@CC@|${CC}|" \
 src/Makevars.in > src/Makevars
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
+-e "s|@CC@|${CC}|" \
+-e "s|@CFLAGS@|${CFLAGS}|" \
 src/graphm/Makefile.in > src/graphm/Makefile
 cd src/graphm && make all
