@@ -29,7 +29,7 @@ $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL) graphm
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
 graphm: 
-  cd graphm && make
+	cd graphm && make
 
 clean: cleana cleanb
 
