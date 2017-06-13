@@ -30,7 +30,7 @@ $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS)
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
 graphm: 
   cd graphm && make
-  
+
 clean: cleana cleanb
 
 cleana: $(OBJECTS)
