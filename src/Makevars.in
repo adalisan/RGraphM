@@ -29,41 +29,8 @@ $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS)
 ./graphmatch_rcpp.o: ./RcppExports.o ./RGraphM_init.o $(GRAPHM_OBJ_REL)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL)
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL)
-
-./graphm/experiment.o:   experiment.cpp experiment.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c experiment.cpp  -o ./experiment.o
-./graphm/rpc.o:   rpc.cpp rpc.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c rpc.cpp  -o ./rpc.o
-./graphm/graph.o:   graph.cpp graph.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c graph.cpp  -o ./graph.o
-./graphm/hungarian.o:   hungarian.cpp hungarian.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS)  -I$(LIB_GSL)/include -c hungarian.cpp  -o ./hungarian.o
-./graphm/algorithm.o:   algorithm.cpp algorithm.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm.cpp  -o ./algorithm.o
-#graph matching algorithms
-./graphm/algorithm_ca.o: algorithm_ca.cpp algorithm_ca.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_ca.cpp -o ./algorithm_ca.o
-./graphm/algorithm_path.o: algorithm_path.cpp algorithm_path.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_path.cpp -o ./algorithm_path.o
-./graphm/algorithm_ext.o:   algorithm_ext.cpp algorithm_ext.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_ext.cpp  -o ./algorithm_ext.o
-./graphm/algorithm_fsol.o:   algorithm_fsol.cpp algorithm_fsol.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_fsol.cpp  -o ./algorithm_fsol.o
-./graphm/algorithm_iden.o:   algorithm_iden.cpp algorithm_iden.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_iden.cpp  -o ./algorithm_iden.o
-./graphm/algorithm_lp.o:   algorithm_lp.cpp algorithm_lp.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_lp.cpp  -o ./algorithm_lp.o
-./graphm/algorithm_qcv.o:   algorithm_qcv.cpp algorithm_qcv.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_qcv.cpp  -o ./algorithm_qcv.o
-./graphm/algorithm_rand.o:   algorithm_rand.cpp algorithm_rand.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS)  -I$(LIB_GSL)/include -c algorithm_rand.cpp  -o ./algorithm_rand.o
-./graphm/algorithm_rank.o:   algorithm_rank.cpp algorithm_rank.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_rank.cpp  -o ./algorithm_rank.o
-./graphm/algorithm_umeyama.o:   algorithm_umeyama.cpp algorithm_umeyama.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_umeyama.cpp  -o ./algorithm_umeyama.o
-./graphm/algorithm_unif.o:   algorithm_unif.cpp algorithm_unif.h
-		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I$(LIB_GSL)/include -c algorithm_unif.cpp  -o ./algorithm_unif.o
-
+$(GRAPHM_OBJ_REL): 
+   (cd graphm ; make)
 
 
 clean: cleana cleanb
