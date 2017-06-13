@@ -28,7 +28,7 @@ $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS) graphm
 ./graphmatch_rcpp.o: ./RcppExports.o ./RGraphM_init.o graphm $(GRAPHM_OBJ_REL)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL) graphm
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
-graphm: 
+graphm: $(GRAPHM_OBJ_REL)
 	cd graphm && make
 
 clean: cleana cleanb
