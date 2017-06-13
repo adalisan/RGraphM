@@ -24,7 +24,7 @@ OBJECTS= $(SOURCES:.cpp=.o) RGraphM_init.o $(GRAPHM_OBJ_REL)
 
 .PHONY: all $(GRAPHM_OBJ_REL)
 all:  $(GRAPHM_OBJ_REL) $(SHLIB) 
-$(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS)
+$(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS) graphm
 ./graphmatch_rcpp.o: ./RcppExports.o ./RGraphM_init.o graphm $(GRAPHM_OBJ_REL)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL) graphm
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
