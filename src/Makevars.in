@@ -16,7 +16,6 @@ GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
 PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
 SHVER= 1
-VPATH= ./graphm:./graphm-0.52
 CXX = @CC@
 
 SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
@@ -30,7 +29,7 @@ $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL)
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL)
 $(GRAPHM_OBJ_REL): 
-   (cd graphm ; make)
+   cd graphm; make
 
 
 clean: cleana cleanb
