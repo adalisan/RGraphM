@@ -25,13 +25,12 @@ OBJECTS= $(SOURCES:.cpp=.o) RGraphM_init.o $(GRAPHM_OBJ_REL)
 .PHONY: all $(GRAPHM_OBJ_REL)
 all:  $(GRAPHM_OBJ_REL) $(SHLIB) 
 $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS)
-./graphmatch_rcpp.o: ./RcppExports.o ./RGraphM_init.o $(GRAPHM_OBJ_REL)
-./RcppExports.o:  $(GRAPHM_OBJ_REL)
-./RGraphM_init.o: $(GRAPHM_OBJ_REL)
-$(GRAPHM_OBJ_REL): 
-   cd graphm; make
-
-
+./graphmatch_rcpp.o: ./RcppExports.o ./RGraphM_init.o graphm $(GRAPHM_OBJ_REL)
+./RcppExports.o:  $(GRAPHM_OBJ_REL) graphm
+./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
+graphm: 
+  (cd graphm; make)
+  
 clean: cleana cleanb
 
 cleana: $(OBJECTS)
