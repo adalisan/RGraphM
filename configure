@@ -7,10 +7,11 @@ CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
--e "s|@CC@|${CC}|" \
+-e "s|@CC@|${CPP}|" \
+-e "s|@CFLAGS@|${CPPFLAGS}|" \
 src/Makevars.in > src/Makevars
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
--e "s|@CC@|${CC}|" \
--e "s|@CFLAGS@|${CFLAGS}|" \
+-e "s|@CC@|${CPP}|" \
+-e "s|@CFLAGS@|${CPPFLAGS}|" \
 src/graphm/Makefile.in > src/graphm/Makefile
