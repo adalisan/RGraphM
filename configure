@@ -14,4 +14,3 @@ sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@CC@|${CC}|" \
 -e "s|@CFLAGS@|${CFLAGS}|" \
 src/graphm/Makefile.in > src/graphm/Makefile
-cd src/graphm && make all
