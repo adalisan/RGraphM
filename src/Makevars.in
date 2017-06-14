@@ -9,6 +9,10 @@ PKG_CPPFLAGS = @CFLAGS@ $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I
 #-pedantic 
 #-pthread  -O2 -g
 
+#PKG_CPPFLAGS = -I. -I../inst/include
+## Use the R_HOME indirection to support installations of multiple R version
+#PKG_LIBS = `"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \ 
+#           -e "RcppGSL:::LdFlags()`
 
 GRAPHM_OBJ =  algorithm_ca.o algorithm_ext.o algorithm_fsol.o  algorithm_iden.o algorithm_lp.o algorithm.o algorithm_path.o algorithm_qcv.o algorithm_rand.o algorithm_rank.o algorithm_umeyama.o algorithm_unif.o experiment.o graph.o hungarian.o  rpc.o
 GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
@@ -29,7 +33,7 @@ $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS) graphm
 ./RcppExports.o:  $(GRAPHM_OBJ_REL) graphm
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
 graphm: $(GRAPHM_OBJ_REL)
-	cd graphm && make
+	cd graphm && $(make)
 
 clean: cleana cleanb
 
