@@ -6,6 +6,8 @@ CPP=`"${R_HOME}/bin/R" CMD config CPP`
 CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
+ALL_CXXFLAGS=`"${R_HOME}/bin/R" CMD config ALL_CXXFLAGS`
+
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
 -e "s|@CC@|${CPP}|" \
@@ -14,5 +16,5 @@ src/Makevars.in > src/Makevars
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
 -e "s|@CC@|${CPP}|" \
--e "s|@CFLAGS@|${ALL_CFLAGS}|" \
+-e "s|@CFLAGS@|${ALL_CXXFLAGS}|" \
 src/graphm/Makefile.in > src/graphm/Makefile
