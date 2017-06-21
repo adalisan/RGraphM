@@ -1,13 +1,14 @@
 CXX ?= @CC@
-GRAPHM_CFLAGS = @CFLAGS@ @GSL_CFLAGS@/gsl
+GRAPHM_CFLAGS = -Wno-deprecated -O3 -fPIC @CPICFLAGS@ @CFLAGS@ @GSL_CFLAGS@/gsl
 #-Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated -pedantic -pthread  -O2 -g
 #LDFLAGS= -lgsl -lgslcblas
+#LDFLAGS="-lgsl -lgslcblas -static";
 
 
 SHVER = 1
 all: ./bin/graphm 
 ./bin/graphm: ./algorithm_ca.o ./algorithm_path.o ./algorithm_ext.o ./algorithm_fsol.o  ./algorithm_iden.o ./algorithm_lp.o ./algorithm.o ./algorithm_path.o ./algorithm_qcv.o ./algorithm_rand.o ./algorithm_rank.o ./algorithm_umeyama.o ./algorithm_unif.o ./experiment.o ./graph.o ./hungarian.o  ./rpc.o main.cpp
-	$(CXX) $(GRAPHM_CFLAGS)  main.cpp ./*o $(LDFLAGS) -o ./bin/graphm @GSL_LIBS@
+#	$(CXX) $(GRAPHM_CFLAGS)  main.cpp ./*o $(LDFLAGS) -o ./bin/graphm @GSL_LIBS@
 #interface classes
 ./experiment.o:   experiment.cpp experiment.h
 		$(CXX) $(GRAPHM_CFLAGS) -c experiment.cpp  -o ./experiment.o
