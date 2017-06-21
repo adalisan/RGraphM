@@ -16,6 +16,6 @@ src/Makevars.in > src/Makevars
 sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
 -e "s|@CC@|${CPP}|" \
--e "s|@CFLAGS@|${ALL_CXXFLAGS}|" \
+-e "s|@CFLAGS@|${CXXFLAGS}|" \
 -e "s|@CPICFLAGS@|${CPICFLAGS}|" \
 src/graphm/Makefile.in > src/graphm/Makefile
