@@ -6,6 +6,10 @@ init:
         $ErrorActionPreference = "Stop"
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
+        Invoke-WebRequest https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/local323.zip -OutFile "..\local323.zip"
+        Invoke-Expression "7z.exe e ..\local323.zip  -oC:\Rext\"
+        $env:Path += "C:\Rext\lib"
+        $env:LIB_GSL += "C:\Rext"
 
 install:
   ps: Bootstrap
