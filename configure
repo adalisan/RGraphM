@@ -17,5 +17,5 @@ sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
 -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
 -e "s|@CC@|${CPP}|" \
 -e "s|@CFLAGS@|${CXXFLAGS}|" \
--e "s|@CPICFLAGS@|${CPICFLAGS}|" \
+-e "s|@CPICFLAGS@|${CXXPICFLAGS}|" \
 src/graphm/Makefile.in > src/graphm/Makefile
