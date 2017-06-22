@@ -91,7 +91,10 @@ int rpc::set_param(std::string pname,float pvalue)
   };
   return stop_search;
 }
-
+int rpc::set_param(std::string pname, const char *pvalue) {
+  return set_param (pname , std::string(pvalue));
+}
+  
 int rpc::set_param(std::string pname,std::string pvalue)
 {
   bool stop_search=0;

@@ -60,6 +60,8 @@ public:
     int set_param(std::string pname,int pvalue);
     int set_param(std::string pname,float pvalue);
     int set_param(std::string pname,std::string pvalue);
+    
+    int set_param(std::string pname, const char *pvalue);
     parameter get_param(std::string pname);
     double get_param_d(std::string pname){parameter p=get_param(pname); return p.dvalue;};
     int get_param_i(std::string pname){parameter p=get_param(pname); return p.ivalue;};
