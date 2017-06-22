@@ -22,7 +22,7 @@
 algorithm::algorithm(std::string fconfig)
  : rpc(fconfig)
 {
-gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='';cscore_matrix='';
+gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';
 }
 algorithm::algorithm()
  : rpc()
