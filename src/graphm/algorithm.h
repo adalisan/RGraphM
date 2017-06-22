@@ -44,7 +44,16 @@ Class of graph matching results
 class match_result
 {
 public:
-	match_result(){gm_P=NULL;gm_P_exact=NULL;salgo="";}
+	match_result() {
+        gm_P=NULL;
+        salgo = "";
+        gm_P_exact=NULL;        
+        inum_iteration=-1;
+        dres = 0.0;
+	    dtime = 0.0;
+        dfvalue = 0.0;
+	    dfvalue_exact = 0.0;
+        }
 	std::vector<double> vd_trace;
 	int inum_iteration;
 	double dres;

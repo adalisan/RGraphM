@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 run_graph_match <- function(A, B, algorithm_params) {
-    .Call('RGraphM_run_graph_match', PACKAGE = 'RGraphM', A, B, algorithm_params)
+    .Call(RGraphM_run_graph_match, A, B, algorithm_params)
 }
 

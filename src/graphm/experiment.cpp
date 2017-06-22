@@ -106,7 +106,6 @@ void experiment::run_experiment(graph &g, graph &h)
 
     int N2 =0;
     N2 = h.get_adjmatrix()->size1;
-    char fname[4];
     // Matrix of local similarities between graph vertices
     gsl_matrix* gm_ldh=gsl_matrix_alloc(N1,N2);
 
@@ -145,7 +144,7 @@ void experiment::run_experiment(graph &g, graph &h)
         algo_i->set_ldhmatrix(gm_ldh);
         match_result mres_i=algo_i->gmatch(g,h,NULL,NULL,dalpha_ldh);
         delete algo_i;
-        char fname[5];
+
         counter << a ;
         printout(counter.str());
         FILE *matrix_out = fopen( "gm_P_init.txt","w");
