@@ -44,7 +44,7 @@ graph::graph(graph &gr) : rpc()
 	set_adjmatrix(gm_t);
 }
 
-const graph &graph::operator=(graph &gh)
+graph &graph::operator=(graph &gh)
 {
 	if (&gh != this)
 	{
@@ -126,7 +126,7 @@ int graph::add_dummy_nodes(int id)
 	double dmin = gsl_matrix_min(gm_A);
 	double dmax = gsl_matrix_max(gm_A);
 	dmin = (1 - ddummy_nodes_fill) * dmin + ddummy_nodes_fill * dmax;
-	gsl_matrix *gm_A_new = gsl_matrix_alloc(N + id, N + id);
+	gsl_matrix *gm_A_new = gsl_matrix_alloc(Nn, Nn);
 	gsl_matrix_view gmv_A_new = gsl_matrix_submatrix(gm_A_new, 0, 0, N, N);
 	gsl_matrix_set_all(gm_A_new, dmin);
 	gsl_matrix_memcpy(&gmv_A_new.matrix, gm_A);
@@ -235,8 +235,8 @@ void graph::printdot(std::string fname_out, gsl_matrix *gm_P)
 				}
 	};
 	fout << "}" << std::endl;
-	if (gm_P != NULL)
-		gsl_matrix_free(gm_temp);
+	//remove gm_temp to stop memory leak
+	gsl_matrix_free(gm_temp);
 }
 
 graph::~graph()

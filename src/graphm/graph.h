@@ -45,7 +45,7 @@ class graph : public rpc
     graph(const gsl_matrix *_gm_A);
     graph(std::string fconfig = "config.txt");
     graph(graph &_graph);
-    const graph &operator=(graph &);
+    graph &operator=(graph &);
 
     //load graph routine
     int load_graph(std::string fgraph, char ftype = 'A', char cformat = 'D', std::string fvertexlst_name = "");
