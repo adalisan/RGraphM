@@ -105,7 +105,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	if (pdebug.ivalue) gsl_matrix_printout(&gvv_P.vector,"gvv_P",pdebug.strvalue);
 	qcv_gradient_opt(gm_Ag_d,gm_Ah_d,&gvv_P.vector,gv_C,gm_temp);
 	dt1=clock();
-	double r=(dt1-dt0)/CLOCKS_PER_SEC;
+	//double r=(dt1-dt0)/CLOCKS_PER_SEC;
 	if (pdebug.ivalue) gsl_matrix_printout(gv_C,"gv_C",pdebug.strvalue);
 		
 	//result save

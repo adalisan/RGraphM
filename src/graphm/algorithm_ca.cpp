@@ -25,7 +25,7 @@ match_result algorithm_ca::match(graph &g, graph &h, gsl_matrix *gm_P_i, gsl_mat
 	bool bblast_match_end = (get_param_i("blast_match_proj") == 1);
 	bool bblast_match = (get_param_i("blast_match") == 1);
 	double dfw_xeps = get_param_d("algo_fw_xeps");
-	double bgreedy = (get_param_i("hungarian_greedy") == 1);
+	bool bgreedy = (get_param_i("hungarian_greedy") == 1);
 	double dfvalue;
 	if (bverbose)
 		*gout << "C-adaptation strategy" << std::endl;
