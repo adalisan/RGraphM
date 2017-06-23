@@ -29,7 +29,7 @@
 graph::graph(const gsl_matrix *_gm_A) : rpc("")
 {
 	gm_A = NULL;
-	N=0
+	N = 0;
 	set_adjmatrix(_gm_A);
 	
 }
@@ -43,7 +43,7 @@ graph::graph(std::string fconfig)
 graph::graph(graph &gr) : rpc()
 {
 	gm_A = NULL;
-	N= 0;
+	N = 0;
 	const gsl_matrix *gm_t = gr.get_adjmatrix();
 	set_adjmatrix(gm_t);
 }
