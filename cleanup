@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+rm -f src/*.dll
 rm -f src/Makevars
 rm -f src/graphm/graphm
 rm -f src/graphm/Makefile
