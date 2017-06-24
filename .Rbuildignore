@@ -4,6 +4,7 @@
 ^/src/graphm/\.vscode$
 README
 ^PATH$
+^.RData
 ^bak$
 ^cran-comments\.md$
 ^.travis.yml$
