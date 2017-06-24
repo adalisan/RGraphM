@@ -5,6 +5,7 @@
 README
 ^PATH$
 ^.RData
+^.Rhistory
 ^bak$
 ^cran-comments\.md$
 ^.travis.yml$
