@@ -68,7 +68,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix* gm_dP=gsl_matrix_alloc(N,N);
 	gvv_dP=gsl_vector_view_array(gm_dP->data,N*N);
 	gsl_matrix* gm_dP_2=gsl_matrix_alloc(N,N);
-	gsl_vector_view gvv_dP_2=gsl_vector_view_array(gm_dP_2->data,N*N);
+	//gsl_vector_view gvv_dP_2=gsl_vector_view_array(gm_dP_2->data,N*N);
 	gsl_matrix_set_zero(gm_dP_2);
 	
 	if (gm_P_i==NULL)
@@ -191,7 +191,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix_sub(gm_P_prev,gm_P);
 	dfvalue=f_qcv(gm_Ag_d,gm_Ah_d,gm_P,gm_temp,true);
 	ddP_norm=gsl_matrix_norm(gm_P_prev,1);
-	bstop_algo=((ddP_norm<dfw_xeps*N) and ((abs(dfvalue-dfvalue_prev)<dfw_feps*abs(dfvalue_prev)) or (ddP_norm==0)) or (abs(dfvalue-dfvalue_prev)<1e-20));
+	bstop_algo = ((ddP_norm<dfw_xeps*N) and ((abs(dfvalue-dfvalue_prev)<dfw_feps*abs(dfvalue_prev)) or (ddP_norm==0)) or (abs(dfvalue-dfvalue_prev)<1e-20));
 	dt3=clock();
 	if (bverbose) *gout<<"x="<<dP_norm<<", f="<<dfvalue<<", dx="<<ddP_norm<<", df="<<(dfvalue_prev-dfvalue)<<", "<<"grad="<<(dfvalue_prev-dfvalue)/ddP_norm<<". Timing="<<(dt1-dt0)/CLOCKS_PER_SEC<<" "<<(dt2-dt1)/CLOCKS_PER_SEC<<" "<<(dt3-dt2)/CLOCKS_PER_SEC<<std::endl;
 	

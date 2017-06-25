@@ -84,7 +84,7 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	  }
   	}
   }
-  int expected_result_count=0;
+  //int expected_result_count=0;
   vector<string> algo_list;
   if (!Rf_isNull(algorithm_params["algo"]) ) {
   	string str(as<string>(algorithm_params["algo"]));

@@ -235,7 +235,8 @@ void graph::printdot(std::string fname_out, gsl_matrix *gm_P)
 				}
 				else
 				{
-					fout << c << gper[i] << "->" << i << c << "--" << c << gper[j] << "->" << j << c << ";" << std::endl;
+				  int gper_i =gper[i];
+					fout << c << gper_i << "->" << i << c << "--" << c << gper[j] << "->" << j << c << ";" << std::endl;
 				}
 	};
 	fout << "}" << std::endl;
