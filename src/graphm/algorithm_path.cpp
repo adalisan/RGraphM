@@ -124,12 +124,12 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
     //*************ALGORITHM***********************
     bool bpath_continue=true;
     double dlambda_add=dlambda_min;
-    double dlambda_fix;
-    double df_value_old, df_value, dP_norm, ddP_norm, dtemp;
+    double dlambda_fix = 0;
+    double df_value_old, df_value, dP_norm, ddP_norm; // dtemp;
     double dlambda=1;
     double dlambda_M_c=1;
     bool binc_lambda=false;
-    bool bmax_lambda;
+    bool bmax_lambda=true;
     gsl_matrix_memcpy(gm_P_prev, gm_P);
     if (pdebug.ivalue) gsl_matrix_printout(gm_Lg_d, "Lg", pdebug.strvalue);
     if (pdebug.ivalue) gsl_matrix_printout(gm_Lh_d, "Lh", pdebug.strvalue);
@@ -257,8 +257,8 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
             df_value=f_qcvqcc(gm_Ag_d, gm_Ah_d, gm_Lg_d, gm_Lh_d, gm_Delta, gm_P, dlambda, gm_temp, gm_temp2);
             gsl_matrix_memcpy(gm_temp, gm_P_prev);
             gsl_matrix_sub(gm_P_prev, gm_P);
-            if (df_value>df_value_old)
-                int dbg=1;
+            //if (df_value>df_value_old)
+            //    int dbg=1;
             ddP_norm=gsl_matrix_norm(gm_P_prev, 1);
             bstop_algo=((ddP_norm<dfw_xeps*N*dlambda_M_c) and ((abs(df_value-df_value_old)<dfw_feps*abs(df_value_old)*dlambda_M_c) or (ddP_norm==0)));
             bstop_algo = (bstop_algo or (icounter>pow(N, 4)));
@@ -511,11 +511,11 @@ double algorithm_path::f_qcc(gsl_matrix *gm_Ag_d, gsl_matrix *gm_Ah_d, gsl_matri
     gsl_matrix_transpose_memcpy(gm_temp, gm_Ah_d);
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, gm_temp, gm_Ah_d, 0, gm_temp2);
     double dconst_add=0;
-    for (int i=0; i<gm_temp2->size1; i++)
+    for (unsigned int i=0; i<gm_temp2->size1; i++)
         dconst_add+=gsl_matrix_get(gm_temp2, i, i);
     gsl_matrix_transpose_memcpy(gm_temp, gm_Ag_d);
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, gm_temp, gm_Ag_d, 0, gm_temp2);
-    for (int i=0; i<gm_temp2->size1; i++)
+    for (unsigned int i=0; i<gm_temp2->size1; i++)
         dconst_add+=gsl_matrix_get(gm_temp2, i, i);
     dres+=dconst_add;
     dres=dres*(1-dalpha_ldh);

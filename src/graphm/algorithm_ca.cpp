@@ -22,11 +22,11 @@
 match_result algorithm_ca::match(graph &g, graph &h, gsl_matrix *gm_P_i, gsl_matrix *_gm_ldh, double dalpha_ldh)
 {
 	double dhung_max = get_param_d("hungarian_max");
-	bool bblast_match_end = (get_param_i("blast_match_proj") == 1);
+	//bool bblast_match_end = (get_param_i("blast_match_proj") == 1);
 	bool bblast_match = (get_param_i("blast_match") == 1);
-	double dfw_xeps = get_param_d("algo_fw_xeps");
+	//double dfw_xeps = get_param_d("algo_fw_xeps");
 	bool bgreedy = (get_param_i("hungarian_greedy") == 1);
-	double dfvalue;
+	double dfvalue = 0.0;
 	if (bverbose)
 		*gout << "C-adaptation strategy" << std::endl;
 	//some duplicate variables
