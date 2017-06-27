@@ -53,30 +53,26 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   	Rcpp::String key = param_names[i];
   	if (!(Rf_isNull(algorithm_params[key]))){
   	  if ( Rf_isNumeric(algorithm_params[key]) && !Rf_isInteger(algorithm_params[key]) ) {
-  	 double value = as<double>( algorithm_params[key]);
-     exp.set_param(key,value);
+  	     double value = as<double>( algorithm_params[key]);
+         exp.set_param(key,value);
   	  } else if ( Rf_isInteger(algorithm_params[key]) ) {
-  	  	int value = as<int> ( algorithm_params[key]);
-  	  	exp.set_param(key,value);
+  	  	  int value = as<int> ( algorithm_params[key]);
+  	  	  exp.set_param(key,value);
   	  } else if ( Rf_isString( (algorithm_params[key]) )) {
 
   	  	string tmp_str(as<string> (algorithm_params[key]));
 
 
-  	  	//const char *tmp_cstr = tmp.get_cstring();
 
-     //exp.printout(as<string>( tmp),"Parameters");
-
-
-     debug_out << " \n ";
+        debug_out << " \n ";
   	  	for( unsigned int i=0; i < tmp_str.length(); i++ ){
   	  		debug_out << "i is: " << i << ", the element value is: " << tmp_str[i];
   	  		debug_out << "\n";
   	  	}
 
   	  	if ( tmp_str.size() == 1){
-  	  	char value = tmp_str[0];
-  	  	exp.set_param(key,value);
+  	  	  char value = tmp_str[0];
+  	  	  exp.set_param(key,value);
   	  	}	else {
   	  		//string value = as<string>( algorithm_params[key]);
   	  		exp.set_param(key,tmp_str);
@@ -126,12 +122,11 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
 
     //Rf_warning("exp count is %d",exp_count);
 
-   	for (int exp_i = 0;  exp_i < exp_count; exp_i++) {
+   	for (unsigned int exp_i = 0;  exp_i < exp_count; exp_i++) {
    		Rcpp::NumericMatrix P(P_nr);
    		Rcpp::NumericVector Pv_tmp(P_nr);
    		try{
-
-   		exp.get_P_result(exp_i);
+   		  exp.get_P_result(exp_i);
    		}
    		catch (...){
    			Rf_warning("Unable to get perm mat results from graphm experiment object ");
@@ -157,7 +152,6 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
    						}
    						//debug_out<<P_tmp(j,k)<<std::endl;
    					}
-
    				}
    				//Rf_PrintValue(P);
    			}
