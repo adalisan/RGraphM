@@ -1,4 +1,4 @@
-THIS_CXX = @CC@
+THIS_CXX = @CXX@
 GRAPHM_CFLAGS = -Wno-deprecated  -fPIC @CPICFLAGS@ @CFLAGS@ @GSL_CFLAGS@/gsl
 #-Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated -pedantic -pthread  -O2 -g
 #LDFLAGS= -lgsl -lgslcblas

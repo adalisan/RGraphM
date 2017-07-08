@@ -20,7 +20,7 @@ GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
 PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
 SHVER= 1
-CXX = @CC@
+CXX = @CXX@
 
 SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
 OBJECTS= $(SOURCES:.cpp=.o) RGraphM_init.o $(GRAPHM_OBJ_REL)
