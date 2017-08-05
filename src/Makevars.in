@@ -4,36 +4,32 @@
 # combine with standard arguments for R
 RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
 #RCPPGSL_CFLAGS
-PKG_CPPFLAGS = @CFLAGS@ $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst  
-#-Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated 
-#-pedantic 
+PKG_CPPFLAGS = @CFLAGS@ $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst
+#-Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated
+#-pedantic
 #-pthread  -O2 -g
 
-#PKG_CPPFLAGS = -I. -I../inst/include
-## Use the R_HOME indirection to support installations of multiple R version
-#PKG_LIBS = `"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \ 
-#           -e "RcppGSL:::LdFlags()`
 
-GRAPHM_OBJ =  algorithm_ca.o algorithm_ext.o algorithm_fsol.o  algorithm_iden.o algorithm_lp.o  algorithm_path.o algorithm_qcv.o algorithm_rand.o algorithm_rank.o algorithm_umeyama.o algorithm_unif.o algorithm.o experiment.o graph.o  hungarian.o rpc.o
-GRAPHM_OBJ_REL = $(addprefix ./graphm/,$(GRAPHM_OBJ) )
+
+GRAPHM_OBJ_REL = ./graphm/algorithm_ca.o ./graphm/algorithm_ext.o ./graphm/algorithm_fsol.o  ./graphm/algorithm_iden.o ./graphm/algorithm_lp.o ./graphm/algorithm.o ./graphm/algorithm_path.o ./graphm/algorithm_qcv.o ./graphm/algorithm_rand.o ./graphm/algorithm_rank.o ./graphm/algorithm_umeyama.o ./graphm/algorithm_unif.o ./graphm/experiment.o ./graphm/graph.o ./graphm/hungarian.o  ./graphm/rpc.o
 #PKG_LIBS = $(LDFLAGS) -L../inst -lgraphm -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 PKG_LIBS = $(LDFLAGS) -L$(LIB_GSL)/lib/x64 -lgsl -lgslcblas $(RCPPGSL_LDFLAGS) $(GSL_LIBS)
 
 SHVER= 1
-CXX = @CXX@
+CXX = @CC@
 
 SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
 OBJECTS= $(SOURCES:.cpp=.o) RGraphM_init.o $(GRAPHM_OBJ_REL)
 
 
 .PHONY: all $(GRAPHM_OBJ_REL)
-all:  $(GRAPHM_OBJ_REL) $(SHLIB) 
+all:  $(GRAPHM_OBJ_REL) $(SHLIB)
 $(SHLIB): $(GRAPHM_OBJ_REL) $(OBJECTS) graphm
 ./graphmatch_rcpp.o: ./RcppExports.o ./RGraphM_init.o graphm $(GRAPHM_OBJ_REL)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL) graphm
 ./RGraphM_init.o: $(GRAPHM_OBJ_REL) graphm
 graphm: $(GRAPHM_OBJ_REL)
-	cd graphm &&  $(MAKE)
+	cd graphm && make
 
 clean: cleana cleanb
 
