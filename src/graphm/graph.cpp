@@ -24,6 +24,7 @@
 #include <gsl/gsl_eigen.h>
 #include "hungarian.h"
 #include <stdexcept>
+
 //using namespace std;
 
 graph::graph(const gsl_matrix *_gm_A) : rpc("")
@@ -31,7 +32,7 @@ graph::graph(const gsl_matrix *_gm_A) : rpc("")
 	gm_A = NULL;
 	N = 0;
 	set_adjmatrix(_gm_A);
-	
+
 }
 
 graph::graph(std::string fconfig)

@@ -434,7 +434,7 @@ void gsl_matrix_hungarian(gsl_matrix* gm_C,gsl_matrix* gm_P,gsl_vector* gv_col_i
 	for (long l=0;l<n1*n2;l++)
 	{
 		ind=C_ind[l];
-		ind1=floor(ind/n1);
+		ind1=floor(((int)ind)/n1);
 		ind2=ind%n2;
 
 		if (!bperm_fix_1[ind1] and !bperm_fix_2[ind2])

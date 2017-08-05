@@ -121,6 +121,7 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
         gm_P_bp_temp=gsl_matrix_alloc(N, N);
         gm_P_bp=gsl_matrix_alloc(N, N);
     };
+    int Nqua = pow(N, 4);
     //*************ALGORITHM***********************
     bool bpath_continue=true;
     double dlambda_add=dlambda_min;
@@ -261,7 +262,8 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
             //    int dbg=1;
             ddP_norm=gsl_matrix_norm(gm_P_prev, 1);
             bstop_algo=((ddP_norm<dfw_xeps*N*dlambda_M_c) and ((abs(df_value-df_value_old)<dfw_feps*abs(df_value_old)*dlambda_M_c) or (ddP_norm==0)));
-            bstop_algo = (bstop_algo or (icounter>pow(N, 4)));
+
+            bstop_algo = (bstop_algo or (icounter>Nqua));
             bstop_algo=(bstop_algo or (abs(df_value-df_value_old)<1e-30));
             bstop_algo=(bstop_algo or ((icounter>0) and binc_lambda));//if we are on the increment step do not repreat many times
             icounter++;
