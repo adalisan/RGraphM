@@ -1,4 +1,4 @@
-os:osx
+os: osx
 osx_image: xcode8
 language: r
 cache: packages
