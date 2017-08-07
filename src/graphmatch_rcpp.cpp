@@ -38,13 +38,13 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
 	}
   graph graphm_obj_A(A);
 	//print("Read in matrix for graph A")
-	graphm_obj_A.printout("graphA.txt");
+  //graphm_obj_A.printout("graphA.txt");
   //graphm_obj_A.set_adjmatrix(A);
   graph graphm_obj_B(B);
   //print("Read in matrix for graph B")
   //graphm_obj_B.set_adjmatrix(B);
-  graphm_obj_B.printout("graphB.txt");
-  ofstream debug_out("gm_rcpp_debug.txt", ofstream::out);
+  //graphm_obj_B.printout("graphB.txt");
+  // ofstream debug_out("gm_rcpp_debug.txt", ofstream::out);
 
   experiment exp;
   CharacterVector param_names = algorithm_params.names();
@@ -65,11 +65,11 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
 
 
 
-        debug_out << " \n ";
-  	  	for( unsigned int i=0; i < tmp_str.length(); i++ ){
-  	  		debug_out << "i is: " << i << ", the element value is: " << tmp_str[i];
-  	  		debug_out << "\n";
-  	  	}
+  //       debug_out << " \n ";
+  // 	  	for( unsigned int i=0; i < tmp_str.length(); i++ ){
+  // 	  		debug_out << "i is: " << i << ", the element value is: " << tmp_str[i];
+  // 	  		debug_out << "\n";
+  // 	  	}
 
   	  	if ( tmp_str.size() == 1){
   	  	  char value = tmp_str[0];
@@ -180,17 +180,17 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
                                            Rcpp::Named("exp_count") = exp_count,
                                            Rcpp::Named("Pvec") = P_vector_list
    		);
-   	if (debug_out.is_open())
-   		debug_out.close();
+   	// if (debug_out.is_open())
+   	// 	debug_out.close();
    	return res;
 
   } catch( std::exception &ex) {
-  	if (debug_out.is_open())
-  		debug_out.close();
+  	// if (debug_out.is_open())
+  	// 	debug_out.close();
   	Rf_error(ex.what());
   } catch (...) {
-  	if (debug_out.is_open())
-  		debug_out.close();
+  	// if (debug_out.is_open())
+  	// 	debug_out.close();
   	return Rcpp::List();
   }
 
