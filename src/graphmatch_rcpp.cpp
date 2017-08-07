@@ -1,3 +1,4 @@
+// # Copyright (C) Sancar Adali 2015-2017
 
 #include <Rcpp.h>
 #include <RcppGSL.h>
