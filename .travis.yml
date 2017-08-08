@@ -13,10 +13,10 @@ branches:
   - osx_build
 
 before_install:
-#  - brew tap caskroom/cask
-#  - brew install brew-cask
-#  - brew install Caskroom/cask/xquartz
-#  - brew cask install mactex
+  - brew tap caskroom/cask
+  - brew install brew-cask
+  - brew install Caskroom/cask/xquartz
+  - brew cask install mactex
   - brew install gsl
   
   
