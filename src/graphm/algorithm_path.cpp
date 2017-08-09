@@ -121,7 +121,7 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
         gm_P_bp_temp=gsl_matrix_alloc(N, N);
         gm_P_bp=gsl_matrix_alloc(N, N);
     };
-    int Nqua = pow(N, 4);
+    long Nqua = pow(N, (int)4);
     //*************ALGORITHM***********************
     bool bpath_continue=true;
     double dlambda_add=dlambda_min;
