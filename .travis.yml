@@ -17,7 +17,7 @@ before_install:
 #  - brew install brew-cask
 #  - brew install Caskroom/cask/xquartz
 #  - brew cask install mactex
-  - brew install gsl@1.16
+  - brew install gsl@1
   
   
 after_install:
