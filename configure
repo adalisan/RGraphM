@@ -9,8 +9,8 @@ CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
 ALL_CXXFLAGS=`"${R_HOME}/bin/R" CMD config ALL_CXXFLAGS`
 
-sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
--e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
+sed -e "s|@GSL_LIBS@|${GSL_LIBS} -L/usr/local/opt/gsl@1/lib|" \
+-e "s|@GSL_CFLAGS@|${GSL_CFLAGS} -I/usr/local/opt/gsl@1/include|" \
 -e "s|@CC@|${CC}|" \
 -e "s|@CPP@|${CPP}|" \
 -e "s|@CXX@|${CXX}|" \
