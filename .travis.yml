@@ -18,7 +18,7 @@ before_install:
 #  - brew install Caskroom/cask/xquartz
 #  - brew cask install mactex
 #  - brew install gsl@1
-#  - export PATH="/usr/local/opt/gsl@1/bin:$PATH"
+- export PATH="/usr/local/Cellar/gsl@1/1.16/bin:/usr/local/Cellar/gsl@1/bin:$PATH"
   
   
 after_install:
