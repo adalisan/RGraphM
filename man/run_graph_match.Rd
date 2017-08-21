@@ -79,6 +79,10 @@ verbose_file="verbose_debug.txt",
 graph_dot_print = 1
 )
 print( algorithm_params)
+print ("Dimensions of A")
+print (dim(A))
+print ("Dimensions of B")
+print (dim(B))
  result <- run_graph_match(A, B, algorithm_params)
 
  print ("Original permutation")
@@ -93,7 +97,7 @@ print( algorithm_params)
 
 #Example for matching weighted graphs. Disabled to reduce elapsed time for R check
 if (FALSE){
-  
+
 
 
  algorithm_params["algo"]<- "IDEN UMEY RANK QCV RAND PATH  CA"
