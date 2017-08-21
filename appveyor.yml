@@ -11,9 +11,10 @@ init:
         #Invoke-Expression "cd C:\Rext\ ; ls"
         $env:Path += "\nC:\Rext\lib"
         $env:LIB_GSL = "C:\Rext\lib"
+
 environment:
-  PATH=$PATH:C:\Rext\lib
-  
+  PATH: $PATH:C:\Rext\lib
+
 install:
   ps: Bootstrap
 
