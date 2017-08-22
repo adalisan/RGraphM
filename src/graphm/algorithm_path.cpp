@@ -66,8 +66,8 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
     gsl_vector_free(gv_ones);
     //Delta matrix
     gsl_matrix* gm_Delta=gsl_matrix_alloc(N, N);
-    for (int i=0; i<N; i++)
-        for (int j=0; j<N; j++) {
+    for (int i=0; i < N; i++)
+        for (int j=0; j < N; j++) {
             gsl_matrix_set(gm_Delta, i, j, pow(gsl_matrix_get(gm_Lg_d, i, i)-gsl_matrix_get(gm_Lh_d, j, j), 2));
         };
     gsl_matrix_transpose(gm_Delta);
@@ -121,7 +121,7 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
         gm_P_bp_temp=gsl_matrix_alloc(N, N);
         gm_P_bp=gsl_matrix_alloc(N, N);
     };
-    long Nqua = pow(N, (int)4);
+    long Nqua = N*N*N*N;
     //*************ALGORITHM***********************
     bool bpath_continue=true;
     double dlambda_add=dlambda_min;
