@@ -2,7 +2,6 @@ os: osx
 osx_image: xcode8
 language: r
 cache: packages
-sudo: required
 r:
   - oldrel
   - release
