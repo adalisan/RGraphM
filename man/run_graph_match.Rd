@@ -83,7 +83,7 @@ print ("Dimensions of A")
 print (dim(A))
 print ("Dimensions of B")
 print (dim(B))
-if ( dim(A)[0]>0 && dim(B)[0]>0) {
+if ( dim(A)[1]>0 && dim(B)[1]>0) {
  result <- run_graph_match(A, B, algorithm_params)
 
  print ("Original permutation")
