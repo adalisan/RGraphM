@@ -83,6 +83,7 @@ print ("Dimensions of A")
 print (dim(A))
 print ("Dimensions of B")
 print (dim(B))
+if ( dim(A)[0]>0 && dim(B)[0]>0) {
  result <- run_graph_match(A, B, algorithm_params)
 
  print ("Original permutation")
@@ -94,7 +95,7 @@ print (dim(B))
  		print (paste(algo ,perm_vector , sep = " ",collapse= " "))
  		}
  }
-
+}
 #Example for matching weighted graphs. Disabled to reduce elapsed time for R check
 if (FALSE){
 
