@@ -2,6 +2,10 @@
 
 
 ## R CMD check results
+
+Solaris 32-bit
+Not sure, if tests will run, because of RcppGSL Solaris problem
+
 OSX release
 Crashes upon running test (empty matrix problem?)
 
