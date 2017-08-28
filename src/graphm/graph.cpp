@@ -69,13 +69,13 @@ int graph::load_graph(std::string fgraph_name, char ftype, char cformat, std::st
 	case 'A':
 	case 'a':
 		//matrix size
-		N = 0;
+		float N_read = 0;
 		char buf[1];
 		while (fgraph >> de) //.getline(buf,1))
 		{
-			N++;
+			N_read+=1;
 		};
-		N = sqrt(N);
+		N = sqrt(N_read);
 		int ierror = 1;
 		if (N > 0)
 		{
