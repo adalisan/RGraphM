@@ -107,6 +107,11 @@ void experiment::run_experiment(graph &g, graph &h)
     int N2 =0;
     N2 = h.get_adjmatrix()->size1;
     // Matrix of local similarities between graph vertices
+    if ( N1==0)
+    	throw std::runtime_error("Error: graph g has adjacency matrix of 0 size \n");
+    if ( N2==0)
+    	throw std::runtime_error("Error: graph h has adjacency matrix of 0 size \n");
+
     gsl_matrix* gm_ldh=gsl_matrix_alloc(N1,N2);
 
 
