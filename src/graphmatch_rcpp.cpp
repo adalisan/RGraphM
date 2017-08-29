@@ -116,6 +116,7 @@ Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, c
   try {
 
   	exp.run_experiment(graphm_obj_A, graphm_obj_B);
+  	Rcpp::Rcout <<"GM Experiments complete\n";
 
   	int exp_count = exp.get_algo_len();
 
