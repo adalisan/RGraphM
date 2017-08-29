@@ -3,8 +3,9 @@
 #GSL_LIBS =
 # combine with standard arguments for R
 RCPPGSL_LDFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::LdFlags()"`
+RCPPGSL_CFLAGS = `$(R_HOME)/bin/Rscript -e "RcppGSL:::CFlags()"`
 #RCPPGSL_CFLAGS
-PKG_CPPFLAGS = @CFLAGS@ $(GSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst
+PKG_CPPFLAGS = @CFLAGS@ $(GSL_CFLAGS)  $(RCPPGSL_CFLAGS) -I$(LIB_GSL)/include -I../inst/include  -I../inst
 #-Wno-unused-but-set-variable  -Wno-long-long -Wno-sign-compare -Wno-deprecated
 #-pedantic
 #-pthread  -O2 -g
