@@ -99,18 +99,21 @@ double algorithm::graph_dist(graph &g,graph &h,gsl_matrix* gm_P,char cscore_matr
 	parameter pdebug = get_param("debugprint");
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
+	bool print_debug = false;
+	if ((pdebug.ivalue != NULL) && (pdebug.ivalue))
+	  print_debug = 1;
 	long N=g.getN();
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_At=gsl_matrix_alloc(N,N);
 	gsl_matrix* gm_Ah=gsl_matrix_alloc(N,N);
 	gsl_matrix_memcpy(gm_Ah,h.get_adjmatrix());
-	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_Ah,"gm_Ah",pdebug.strvalue);
+	if (print_debug) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue);
+	if (print_debug) gsl_matrix_printout(gm_Ah,"gm_Ah",pdebug.strvalue);
 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_P,gm_Ah,0,gm_At);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_At,"gm_At",pdebug.strvalue);
+	if (print_debug) gsl_matrix_printout(gm_At,"gm_At",pdebug.strvalue);
 	gsl_blas_dgemm(CblasNoTrans,CblasTrans,1,gm_At,gm_P,0,gm_Ah);
 	gsl_matrix_sub(gm_Ag,gm_Ah);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_Ag,"Ag-Ah",pdebug.strvalue);
+	if (print_debug) gsl_matrix_printout(gm_Ag,"Ag-Ah",pdebug.strvalue);
 
 	double dret=pow(gsl_matrix_norm(gm_Ag,2),2);
 
@@ -123,11 +126,13 @@ double algorithm::graph_dist(graph &g, graph &h,char cscore_matrix){
 	parameter pdebug = get_param("debugprint");
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
-
+	bool print_debug = 0;
+	if ((pdebug.ivalue != NULL) && (pdebug.ivalue))
+		print_debug = 1;
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_Ah=h.get_descmatrix(cscore_matrix);
 	gsl_matrix_sub(gm_Ag,gm_Ah);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_Ag,"Ag-Ah",pdebug.strvalue);
+	if (print_debug) gsl_matrix_printout(gm_Ag,"Ag-Ah",pdebug.strvalue);
 	double dret=pow(gsl_matrix_norm(gm_Ag,2),2);
 	gsl_matrix_free(gm_Ah);
 	gsl_matrix_free(gm_Ag);
