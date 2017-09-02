@@ -100,8 +100,8 @@ double algorithm::graph_dist(graph &g,graph &h,gsl_matrix* gm_P,char cscore_matr
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
 	bool print_debug = false;
-	if ((pdebug.ivalue != NULL) && (pdebug.ivalue))
-	  print_debug = 1;
+	if ((pdebug.ivalue != -1) && (pdebug.ivalue))
+	  print_debug = true;
 	long N=g.getN();
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_At=gsl_matrix_alloc(N,N);
@@ -126,9 +126,9 @@ double algorithm::graph_dist(graph &g, graph &h,char cscore_matrix){
 	parameter pdebug = get_param("debugprint");
 	parameter pdebug_f = get_param("debugprint_file");
 	pdebug.strvalue=pdebug_f.strvalue;
-	bool print_debug = 0;
-	if ((pdebug.ivalue != NULL) && (pdebug.ivalue))
-		print_debug = 1;
+	bool print_debug = false;
+	if ((pdebug.ivalue != -1) && (pdebug.ivalue))
+		print_debug = true;
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_Ah=h.get_descmatrix(cscore_matrix);
 	gsl_matrix_sub(gm_Ag,gm_Ah);

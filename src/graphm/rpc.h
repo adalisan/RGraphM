@@ -34,6 +34,7 @@ Special root class which support parameter control, setting, reading etc.
 */
 struct parameter
 {
+	parameter() : ptype(5), dvalue(-1.0), cvalue(char(0)), ivalue(-1), fvalue(-1.0), strvalue("") {}
 std::string pname;
 /*parameter type:
 1: double
@@ -60,7 +61,7 @@ public:
     int set_param(std::string pname,int pvalue);
     int set_param(std::string pname,float pvalue);
     int set_param(std::string pname,std::string pvalue);
-    
+
     int set_param(std::string pname, const char *pvalue);
     parameter get_param(std::string pname);
     double get_param_d(std::string pname){parameter p=get_param(pname); return p.dvalue;};
