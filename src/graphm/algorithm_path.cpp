@@ -47,6 +47,7 @@ match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
     if (pdebug.ivalue) gsl_matrix_printout(gm_Ag_d, "Ag", pdebug.strvalue);
     if (pdebug.ivalue) gsl_matrix_printout(gm_Ah_d, "Ah", pdebug.strvalue);
     //laplacian construction
+    N=g.getN();
     gsl_matrix* gm_Lg_d=gsl_matrix_alloc(N, N);
     gsl_matrix* gm_Lh_d=gsl_matrix_alloc(N, N);
     gsl_matrix_memcpy(gm_Lg_d, gm_Ag_d);

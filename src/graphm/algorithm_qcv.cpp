@@ -38,6 +38,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix* gm_P_bp_temp=NULL;
 	gsl_matrix* gm_P_bp=NULL;
 	double fbest_path=1e+300;
+	N= g.getN();
 
 	if (bbest_path)
 	{

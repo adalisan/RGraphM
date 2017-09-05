@@ -25,11 +25,12 @@ match_result algorithm_sch::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	bool bgreedy=(get_param_i("hungarian_greedy")==1);
 	match_result mres=algorithm_qcv::match(g,h,gm_P_i,gm_ldh,dalpha_ldh);
 	if (bverbose)
-		*gout<<"SCH algorithm"<<std::endl;	
+		*gout<<"SCH algorithm"<<std::endl;
 	//some duplicate variables
+	N=g.getN();
 	gsl_matrix* gm_Ag_d=g.get_descmatrix(cdesc_matrix);
 	gsl_matrix* gm_Ah_d=h.get_descmatrix(cdesc_matrix);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_Ag_d,"Ag",pdebug.strvalue); 
+	if (pdebug.ivalue) gsl_matrix_printout(gm_Ag_d,"Ag",pdebug.strvalue);
 	if (pdebug.ivalue) gsl_matrix_printout(gm_Ah_d,"Ah",pdebug.strvalue);
 	//memory allocation
 	gsl_eigen_symmv_workspace * gesw= gsl_eigen_symmv_alloc (N);
@@ -42,8 +43,8 @@ match_result algorithm_sch::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_eigen_symmv (gm_Ag_d, eval_g,evec_g,gesw);
 	if (bverbose) *gout<<"Ag eigen vectors"<<std::endl;
 	gsl_eigen_symmv (gm_Ah_d, eval_h,evec_h,gesw);
-	
-	
+
+
 	if (bverbose) *gout<<"Ah eigen vectors"<<std::endl;
 	gsl_eigen_symmv_sort (eval_g, evec_g, GSL_EIGEN_SORT_VAL_DESC);
 	gsl_eigen_symmv_sort (eval_h, evec_h, GSL_EIGEN_SORT_VAL_DESC);
@@ -82,10 +83,10 @@ match_result algorithm_sch::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 			for (int m=0;m<N;m++)
 				C->data[i+N*j]+=pow(gm_Ag_d->data[i+k*N]-gm_Ah_d->data[j+m*N],2);
 		};*/
-	
+
 	gsl_matrix_free(gm_Ag_d);
 	gsl_matrix_free(gm_Ah_d);
-		
+
 //	gsl_matrix_transpose(C);
 	//gsl_matrix_scale(C,-1);
 	gsl_matrix_printout(C,"C",pdebug.strvalue);

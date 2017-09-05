@@ -23,9 +23,10 @@
 match_result algorithm_lp::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matrix* gm_ldh,double dalpha_ldh)
 {
 	if (bverbose)
-		*gout<<"Linear programming matching"<<std::endl;	
+		*gout<<"Linear programming matching"<<std::endl;
 	gsl_matrix* gm_Ag_d=g.get_descmatrix(cdesc_matrix);
 	gsl_matrix* gm_Ah_d=h.get_descmatrix(cdesc_matrix);
+	N=g.getN();
 	//linear program parameters
 	int* ia = new int[N*N*(N+N-1)+N*N+N*N+N*N+1];
 	int* ja = new int[N*N*(N+N-1)+N*N+N*N+N*N+1];
@@ -40,7 +41,7 @@ match_result algorithm_lp::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matr
 				 gsl_matrix_set(gm_Agh,i*N+j,j*N+k,gsl_matrix_get(gm_Ag_d,i,k));
 				 ia[icounter]=i*N+j+1;ja[icounter]=j*N+k+1;ar[icounter]=gsl_matrix_get(gm_Ag_d,i,k);
 				 icounter++;
-			};	
+			};
 			for (int k=0;k<N;k++){
 			   //sometimes we have to change yet allocated constaints
 			   if (k!=j){
@@ -80,7 +81,7 @@ match_result algorithm_lp::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matr
 	  };
 	//glpk package
 	LPX* lp;
-	lp=lpx_create_prob();	
+	lp=lpx_create_prob();
 	lpx_set_prob_name(lp,"glpk");
 	lpx_add_rows(lp,N*N+N);
 	for (int i=0;i<N*N;i++)
@@ -94,7 +95,7 @@ match_result algorithm_lp::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matr
 	lpx_set_obj_dir(lp,LPX_MIN);
 	//the label cost matrix introduce the coefficients for the first part of objective function
 	if (dalpha_ldh>0)
-	{		
+	{
 	     for (int i=0;i<N*N;i++)
 			lpx_set_obj_coef(lp,i+1,dalpha_ldh*gm_ldh->data[i]);
 	     for (int i=0;i<2*N*N;i++)
@@ -115,7 +116,7 @@ match_result algorithm_lp::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matr
 	 for (int j=0;j<N;j++)
 		gsl_matrix_set(C,i,j,lpx_get_col_prim(lp,i*N+j+1));
 	lpx_delete_prob(lp);
-	if (pdebug.ivalue) gsl_matrix_printout(C,"C=lp solution",pdebug.strvalue); 
+	if (pdebug.ivalue) gsl_matrix_printout(C,"C=lp solution",pdebug.strvalue);
 	match_result mres;
 	mres.gm_P_exact=gsl_matrix_alloc(N,N);
 	gsl_matrix_transpose_memcpy(mres.gm_P_exact,C);
@@ -125,9 +126,9 @@ match_result algorithm_lp::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matr
 	dscale_factor=10000/dscale_factor;
 	gsl_matrix_scale(C,-dscale_factor);
 	//gsl_matrix_transpose(C);
-	if (pdebug.ivalue) gsl_matrix_printout(C,"scale(C)",pdebug.strvalue); 
+	if (pdebug.ivalue) gsl_matrix_printout(C,"scale(C)",pdebug.strvalue);
 	gsl_matrix* gm_P=gsl_matrix_hungarian(C);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue); 
+	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue);
 	mres.gm_P=gm_P;
 	gsl_matrix_free(gm_Ag_d);
 	gsl_matrix_free(gm_Ah_d);

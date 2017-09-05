@@ -22,18 +22,19 @@
 match_result algorithm_fsol::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matrix* gm_ldh,double dalpha_ldh)
 {
 	if (bverbose)
-		*gout<<"FSol matching"<<std::endl;	
+		*gout<<"FSol matching"<<std::endl;
 	//some duplicate variables
 	match_result mres;
+	N=g.getN();
 	mres.gm_P=gsl_matrix_alloc(N,N);
         std::string sfile=get_param_s("solution_file");
 	FILE *f=fopen(sfile.c_str(),"r");
-	if (f!=NULL){ 
+	if (f!=NULL){
 		gsl_matrix_fscanf(f,mres.gm_P);
 		fclose(f);
 	}
 	else{
-		if (bverbose) *gout<<"Can't load solution file, fsoltity matrix is used"<<std::endl;	
+		if (bverbose) *gout<<"Can't load solution file, fsoltity matrix is used"<<std::endl;
 		gsl_matrix_set_identity(mres.gm_P);
 	}
 	mres.gm_P_exact=NULL;
