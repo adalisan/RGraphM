@@ -47,7 +47,7 @@ public:
 	match_result() {
         gm_P=NULL;
         salgo = "";
-        gm_P_exact=NULL;        
+        gm_P_exact=NULL;
         inum_iteration=-1;
         dres = 0.0;
 	    dtime = 0.0;
@@ -75,7 +75,7 @@ class algorithm : public rpc
 {
 public:
      algorithm(std::string );
-     algorithm();
+     algorithm() ;
      match_result gmatch(graph& g, graph& h,gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1);//common stuff,
      virtual match_result match(graph& g, graph& h, gsl_matrix* gm_P_i=NULL, gsl_matrix* gm_ldh=NULL,double dalpha_ldh=-1)=0;//particular method implementation
      double graph_dist(graph &g,graph &h,gsl_matrix* gm_P,char cscore_matrix);

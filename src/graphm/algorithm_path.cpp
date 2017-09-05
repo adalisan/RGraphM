@@ -21,8 +21,10 @@
 
 match_result algorithm_path::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matrix* _gm_ldh, double dalpha_ldh)
 {
-    bool bblast_match=(get_param_i("blast_match")==1);
-    bool bblast_match_end=(get_param_i("blast_match_proj")==1);
+    bool bblast_match=false;
+	  bblast_match=(get_param_i("blast_match")==1);
+    bool bblast_match_end=false;
+    bblast_match_end=(get_param_i("blast_match_proj")==1);
     bool bbest_path_proj=(get_param_i("best_path_proj_sol")==1);
     bool bbest_path_blast_proj=(get_param_i("best_path_blast_proj_sol")==1);
     bool bbest_path_greedy=(get_param_i("best_path_greedy_sol")==1);

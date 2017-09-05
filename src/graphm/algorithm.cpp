@@ -22,12 +22,35 @@
 algorithm::algorithm(std::string fconfig)
  : rpc(fconfig)
 {
-gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;
+	gm_ldh=NULL;
+	dalpha_ldh=0;
+	bnosymm=false;
+	df_norm=0;
+	N=0;
+	cdesc_matrix='A';
+	cscore_matrix='A';
+	bverbose=false;
+	sverbfile=std::string("");
+
+	N=0;
+	df_norm=0.0;
+
 }
 algorithm::algorithm()
  : rpc()
 {
-gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';
+	gm_ldh=NULL;
+	dalpha_ldh=0;
+	bnosymm=false;
+	df_norm=0;
+	N=0;
+	cdesc_matrix='A';
+	cscore_matrix='A';
+  bverbose=false;
+  sverbfile=std::string("");
+
+  N=0;
+  df_norm=0.0;
 }
 
 //common framework for graph matching algorithm
