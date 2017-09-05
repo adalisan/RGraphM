@@ -27,13 +27,8 @@ algorithm::algorithm(std::string fconfig)
 	bnosymm=false;
 	df_norm=0;
 	N=0;
-	cdesc_matrix='A';
-	cscore_matrix='A';
 	bverbose=false;
 	sverbfile=std::string("");
-
-	N=0;
-	df_norm=0.0;
 
 }
 algorithm::algorithm()
@@ -49,8 +44,6 @@ algorithm::algorithm()
   bverbose=false;
   sverbfile=std::string("");
 
-  N=0;
-  df_norm=0.0;
 }
 
 //common framework for graph matching algorithm
@@ -125,7 +118,7 @@ double algorithm::graph_dist(graph &g,graph &h,gsl_matrix* gm_P,char cscore_matr
 	bool print_debug = false;
 	if ((pdebug.ivalue != -1) && (pdebug.ivalue))
 	  print_debug = true;
-	long N=g.getN();
+	N=g.getN();
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_At=gsl_matrix_alloc(N,N);
 	gsl_matrix* gm_Ah=gsl_matrix_alloc(N,N);

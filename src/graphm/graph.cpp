@@ -31,7 +31,9 @@ graph::graph(const gsl_matrix *_gm_A) : rpc("")
 {
 	gm_A = NULL;
 	N = 0;
+	N=_gm_A->size1;
 	set_adjmatrix(_gm_A);
+
 
 }
 
@@ -46,14 +48,18 @@ graph::graph(graph &gr) : rpc()
 	gm_A = NULL;
 	N = 0;
 	const gsl_matrix *gm_t = gr.get_adjmatrix();
+	N=gm_t->size1;
 	set_adjmatrix(gm_t);
+
 }
 
 graph &graph::operator=(graph &gh)
 {
 	if (&gh != this)
 	{
+		N=gh.get_adjmatrix()->size1;
 		set_adjmatrix(gh.get_adjmatrix());
+
 	}
 	return (*this);
 }
@@ -87,6 +93,7 @@ int graph::load_graph(std::string fgraph_name, char ftype, char cformat, std::st
 			fclose(f);
 			gsl_set_error_handler(NULL);
 			set_adjmatrix(gm_A_l);
+			this->N = gm_A_l->size1;
 			gsl_matrix_free(gm_A_l);
 		};
 		if (ierror != 0)

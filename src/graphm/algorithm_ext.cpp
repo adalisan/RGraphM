@@ -21,13 +21,13 @@
 
 match_result algorithm_NEW::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matrix* gm_ldh,double dalpha_ldh)
 {
-if (bverbose) *gout<<"The best matching algorithm"<<std::endl;  
+if (bverbose) *gout<<"The best matching algorithm"<<std::endl;
 match_result mres; //class with results
 gsl_matrix* gm_Ag_d=g.get_descmatrix(cdesc_matrix);//get the adjacency matrix of graph g
 gsl_matrix* gm_Ah_d=h.get_descmatrix(cdesc_matrix);//get the adjacency matrix of graph h
 //the similarity matrix C is defined in the algorithm class memeber gm_ldh
 //dalpha_ldh is corresponding is corresponding to the linear combination coefficent alpha
-
+N=g.getN();
 gsl_matrix* P=gsl_matrix_alloc(N,N);
 //YOUR OPERATIONS  WITH MATRICES, RESULT IS A PERMUTATION MATRIX P
 
