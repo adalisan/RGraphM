@@ -22,12 +22,28 @@
 algorithm::algorithm(std::string fconfig)
  : rpc(fconfig)
 {
-gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;
+	gm_ldh=NULL;
+	dalpha_ldh=0;
+	bnosymm=false;
+	df_norm=0;
+	N=0;
+	bverbose=false;
+	sverbfile=std::string("");
+
 }
 algorithm::algorithm()
  : rpc()
 {
-gm_ldh=NULL;dalpha_ldh=0;bnosymm=false;df_norm=0;N=0;cdesc_matrix='A';cscore_matrix='A';
+	gm_ldh=NULL;
+	dalpha_ldh=0;
+	bnosymm=false;
+	df_norm=0;
+	N=0;
+	cdesc_matrix='A';
+	cscore_matrix='A';
+  bverbose=false;
+  sverbfile=std::string("");
+
 }
 
 //common framework for graph matching algorithm
@@ -102,7 +118,7 @@ double algorithm::graph_dist(graph &g,graph &h,gsl_matrix* gm_P,char cscore_matr
 	bool print_debug = false;
 	if ((pdebug.ivalue != -1) && (pdebug.ivalue))
 	  print_debug = true;
-	long N=g.getN();
+	N=g.getN();
 	gsl_matrix* gm_Ag=g.get_descmatrix(cscore_matrix);
 	gsl_matrix* gm_At=gsl_matrix_alloc(N,N);
 	gsl_matrix* gm_Ah=gsl_matrix_alloc(N,N);

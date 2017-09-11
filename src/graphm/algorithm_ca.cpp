@@ -22,6 +22,7 @@
 match_result algorithm_ca::match(graph &g, graph &h, gsl_matrix *gm_P_i, gsl_matrix *_gm_ldh, double dalpha_ldh)
 {
 	double dhung_max = get_param_d("hungarian_max");
+	N=g.getN();
 	//bool bblast_match_end = (get_param_i("blast_match_proj") == 1);
 	bool bblast_match = (get_param_i("blast_match") == 1);
 	//double dfw_xeps = get_param_d("algo_fw_xeps");

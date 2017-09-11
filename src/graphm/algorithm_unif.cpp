@@ -23,6 +23,7 @@ match_result algorithm_unif::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_ma
 {
 	//some duplicate variables
 	match_result mres;
+	N=g.getN();
 	mres.gm_P=gsl_matrix_alloc(N,N);
 	gsl_matrix_set_all(mres.gm_P,1.0/N);
 	mres.gm_P_exact=NULL;

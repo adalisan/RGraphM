@@ -22,8 +22,9 @@
 match_result algorithm_rand::match(graph& g, graph& h,gsl_matrix* gm_P_i, gsl_matrix* gm_ldh,double dalpha_ldh)
 {
 	if (bverbose)
-		*gout<<"Random matching"<<std::endl;	
+		*gout<<"Random matching"<<std::endl;
 	match_result mres;
+	N=g.getN();
 	mres.gm_P=gsl_matrix_alloc(N,N);
 	mres.gm_P_exact=NULL;
 	gsl_matrix_set_zero(mres.gm_P);

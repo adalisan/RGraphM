@@ -23,7 +23,8 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 {
 	if (bverbose)
 		*gout<<"QCV matching"<<std::endl;
-	bool bblast_match_end=(get_param_i("blast_match_proj")==1);	
+	bool bblast_match_end=false;
+	bblast_match_end=(get_param_i("blast_match_proj")==1);
 	double dfw_xeps=get_param_d("algo_fw_xeps");
 	double dfw_feps=get_param_d("algo_fw_feps");
 	double dhung_max=get_param_d("hungarian_max");
@@ -37,7 +38,8 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix* gm_P_bp_temp=NULL;
 	gsl_matrix* gm_P_bp=NULL;
 	double fbest_path=1e+300;
-	
+	N= g.getN();
+
 	if (bbest_path)
 	{
 		gm_P_bp_temp=gsl_matrix_alloc(N,N);
@@ -47,7 +49,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	//some duplicate variables
 	gsl_matrix* gm_Ag_d=g.get_descmatrix(cdesc_matrix);
 	gsl_matrix* gm_Ah_d=h.get_descmatrix(cdesc_matrix);
-	if (pdebug.ivalue) gsl_matrix_printout(gm_Ag_d,"Ag",pdebug.strvalue); 
+	if (pdebug.ivalue) gsl_matrix_printout(gm_Ag_d,"Ag",pdebug.strvalue);
 	if (pdebug.ivalue) gsl_matrix_printout(gm_Ah_d,"Ah",pdebug.strvalue);
 	//Frank-Wolfe algorithm
 	bool bstop_algo=false;
@@ -63,14 +65,14 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_vector_set_zero(gv_col_inc);
 	gsl_permutation* gp_sol=gsl_permutation_alloc(N);
 	gsl_permutation_init(gp_sol);
-	
-	
+
+
 	gsl_matrix* gm_dP=gsl_matrix_alloc(N,N);
 	gvv_dP=gsl_vector_view_array(gm_dP->data,N*N);
 	gsl_matrix* gm_dP_2=gsl_matrix_alloc(N,N);
 	//gsl_vector_view gvv_dP_2=gsl_vector_view_array(gm_dP_2->data,N*N);
 	gsl_matrix_set_zero(gm_dP_2);
-	
+
 	if (gm_P_i==NULL)
 		gsl_matrix_set_all(gm_P,1.0/N);
 	else
@@ -79,7 +81,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix_memcpy(gm_P_prev,gm_P);
 	//perm matrix transformation into vector
 	gvv_P=gsl_vector_view_array(gm_P->data,N*N);
-	
+
 	//and in opposite direction for gradient
 	gmv_C=gsl_matrix_view_vector(gv_C,N,N);
 	C=&gmv_C.matrix;
@@ -89,7 +91,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix * gm_ddP_prev=gsl_matrix_alloc(N,N);
 	gsl_vector_view gvv_ldh;
 	if (dalpha_ldh>0)
-	{ 
+	{
 		gvv_ldh=gsl_vector_view_array(gm_ldh->data,N*N);
 		if (pdebug.ivalue) gsl_matrix_printout(gm_ldh,"gm_ldh",pdebug.strvalue);
 	};
@@ -107,10 +109,10 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	dt1=clock();
 	//double r=(dt1-dt0)/CLOCKS_PER_SEC;
 	if (pdebug.ivalue) gsl_matrix_printout(gv_C,"gv_C",pdebug.strvalue);
-		
+
 	//result save
 	gsl_matrix_transpose(C);
-	if (pdebug.ivalue) gsl_matrix_printout(C,"C=gradient",pdebug.strvalue); 
+	if (pdebug.ivalue) gsl_matrix_printout(C,"C=gradient",pdebug.strvalue);
 	gsl_matrix_scale(C,2);
 	update_C_hungarian(C);
 	double dscale_factor =gsl_matrix_max_abs(C);
@@ -118,8 +120,8 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	dscale_factor=dhung_max/dscale_factor;
 	gsl_matrix_scale(C,dscale_factor);
 	//gsl_matrix_transpose(C);
-	if (pdebug.ivalue) gsl_matrix_printout(C,"scale(C)",pdebug.strvalue); 
-	
+	if (pdebug.ivalue) gsl_matrix_printout(C,"scale(C)",pdebug.strvalue);
+
 	//hungarian, before the true C matrix must be transposed
 	gsl_matrix_transpose(C);
 	dt1=clock();
@@ -130,15 +132,15 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	update_C_hungarian(C,1,true);//return to the original value
 	gsl_matrix_scale(C,0.5);
 
-	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue);	
-	if (pdebug.ivalue) gsl_matrix_printout(gm_P_prev,"gm_P_prev",pdebug.strvalue);  
-	
+	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P",pdebug.strvalue);
+	if (pdebug.ivalue) gsl_matrix_printout(gm_P_prev,"gm_P_prev",pdebug.strvalue);
+
 	//line search
 	gsl_matrix_memcpy(gm_dP,gm_P);
 	gsl_matrix_sub(gm_dP,gm_P_prev);
-	
-	if (pdebug.ivalue) gsl_matrix_printout(gm_dP,"gm_dP",pdebug.strvalue); 
-	
+
+	if (pdebug.ivalue) gsl_matrix_printout(gm_dP,"gm_dP",pdebug.strvalue);
+
 	double a,b1,b2,bldh;
 	gsl_matrix_transpose(gm_dP);
 	gsl_matrix_transpose(gm_P_prev);
@@ -164,7 +166,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 		gsl_matrix_transpose(gm_P_prev);
 		gsl_matrix_transpose(C);
 		if ((alpha<1) and (alpha>0))
-			{	
+			{
 				gsl_matrix_scale(gm_dP,(1-alpha));
 				gsl_matrix_sub(gm_P,gm_dP);
 			};
@@ -176,16 +178,16 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	else
 	{
 	     dfvalue=f_qcv(gm_Ag_d,gm_Ah_d,gm_P,gm_temp,true);
-	     if (dfvalue>dfvalue_prev) 
+	     if (dfvalue>dfvalue_prev)
 			{gsl_matrix_memcpy(gm_P,gm_P_prev);
 			 dfvalue=dfvalue_prev;};
 	};
-	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P_step_finish",pdebug.strvalue); //sparsity 
+	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P_step_finish",pdebug.strvalue); //sparsity
 	long lsparse=0;
 	for (long j=0;j<N*N;j++)
 		lsparse+=(gm_P->data[j]<1e-7);
 	if (bverbose) *gout<<"#zeros="<<lsparse<<", #nonzeros="<<N*N-lsparse<<std::endl;
-			
+
 	//stop criterion
 	dP_norm=gsl_matrix_norm(gm_P_prev,1);
 	gsl_matrix_sub(gm_P_prev,gm_P);
@@ -194,7 +196,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	bstop_algo = ((ddP_norm<dfw_xeps*N) and ((abs(dfvalue-dfvalue_prev)<dfw_feps*abs(dfvalue_prev)) or (ddP_norm==0)) or (abs(dfvalue-dfvalue_prev)<1e-20));
 	dt3=clock();
 	if (bverbose) *gout<<"x="<<dP_norm<<", f="<<dfvalue<<", dx="<<ddP_norm<<", df="<<(dfvalue_prev-dfvalue)<<", "<<"grad="<<(dfvalue_prev-dfvalue)/ddP_norm<<". Timing="<<(dt1-dt0)/CLOCKS_PER_SEC<<" "<<(dt2-dt1)/CLOCKS_PER_SEC<<" "<<(dt3-dt2)/CLOCKS_PER_SEC<<std::endl;
-	
+
 	dfvalue_prev=dfvalue;
 	//now we test different projection to estimate the best permutation
 	if (bbest_path_proj)
@@ -210,7 +212,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 			gsl_matrix_memcpy(gm_P_bp,gm_P_prev);
 		};
 	};
-	
+
 	if (bbest_path_blast_proj)
 	{
 		//permuation projection
@@ -224,7 +226,7 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 			gsl_matrix_memcpy(gm_P_bp,gm_P_prev);
 		};
 	};
-	
+
 	if (bbest_path_greedy)
 	{
 		//permuation projection
@@ -238,13 +240,13 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 			gsl_matrix_memcpy(gm_P_bp,gm_P_prev);
 		};
 	};
-	
+
 	if (bbest_path_blast_greedy)
 	{
 	};
 	gsl_matrix_memcpy(gm_P_prev,gm_P);
 	};//end Frank-Wolfe cycle
-	
+
 	//permuation projection
 	match_result mres;
 	mres.gm_P_exact=gsl_matrix_alloc(N,N);
@@ -259,12 +261,12 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 		{
 			*gout<<"Best path solution is used"<<std::endl;
 			gsl_matrix_memcpy(gm_P,gm_P_bp);
-		};	
+		};
 		gsl_matrix_free(gm_P_bp);
 		gsl_matrix_free(gm_P_bp_temp);
 	};
-	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P_projected",pdebug.strvalue); 
-	
+	if (pdebug.ivalue) gsl_matrix_printout(gm_P,"gm_P_projected",pdebug.strvalue);
+
 	//memory deallocation
 	gsl_matrix_free(gm_temp);
 	gsl_matrix_free(gm_dP);
@@ -277,9 +279,9 @@ match_result algorithm_qcv::match(graph& g, graph& h,gsl_matrix* gm_P_i,gsl_matr
 	gsl_matrix_free(gm_Ah_d);
 	gsl_vector_free(gv_col_inc);
 	gsl_permutation_free(gp_sol);
-	
+
 	mres.gm_P=gm_P;
-	
+
 	//initial score
 	mres.vd_trace.push_back(graph_dist(g,h,cscore_matrix));
 	//final score
@@ -310,7 +312,7 @@ void algorithm_qcv::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl
 	gsl_matrix_transpose(gm_1);
 
 	gsl_matrix_add(&gmv_grad.matrix,gm_1);
-	
+
 	//first term
 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
 	//gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,&gmv_P.matrix,gm_Ah_d,0,gm_temp);
@@ -323,16 +325,16 @@ void algorithm_qcv::qcv_gradient_opt(gsl_matrix *gm_Ag_d,gsl_matrix *gm_Ah_d,gsl
 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,gm_Ah_d,&gmv_P.matrix,0,gm_temp);
 	gsl_matrix_transpose(gm_temp);
 	gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,-1,gm_Ag_d,gm_temp,1,&gmv_grad.matrix);
-	
+
 	gsl_matrix_transpose(&gmv_P.matrix);
 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
 	if (bnosymm) gsl_matrix_transpose(gm_Ah_d);
 	//III gsl_blas_dgemm_sym(CblasLeft,CblasUpper,CblasNoTrans,CblasNoTrans,-2,gm_Ag_d,gm_temp,1,&gmv_grad.matrix);
 	gsl_matrix_free(gm_1);
-	
+
 	gsl_matrix_transpose(&gmv_grad.matrix);
 	gsl_matrix_scale(&gmv_grad.matrix,1-dalpha_ldh);//label cost function scaling
 	gsl_vector_scale(gv_grad,1/df_norm);//normalization
-	
+
 }
 
