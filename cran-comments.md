@@ -8,6 +8,7 @@ Not sure, if tests will run, because of RcppGSL Solaris problem
 
 OSX release
 Crashes upon running test (empty matrix problem?)
+Works as of version 0.1.11
 
 Windows 7 x64 R 3.3.1
 * using R version 3.3.1 (2016-06-21)
