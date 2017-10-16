@@ -12,8 +12,8 @@ init:
         $env:Path += '\nC:\Rext\lib'
         $env:LIB_GSL = 'C:\Rext\lib'
 
-environment:
-  PATH: $PATH:C:\Rext\lib
+#environment:
+#  PATH: $PATH:C:\Rext\lib
 
 install:
   ps: Bootstrap
