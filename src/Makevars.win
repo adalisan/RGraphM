@@ -29,7 +29,7 @@ SOURCES=  graphmatch_rcpp.cpp RcppExports.cpp
 OBJECTS= $(SOURCES:.cpp=.o) RGraphM_init.o $(GRAPHM_OBJ_REL)
 
 .PHONY: all $(GRAPHM_OBJ_REL)
-all:  $(GRAPHM_OBJ_REL) $(SHLIB) 
+all:  $(GRAPHM_OBJ_REL) $(SHLIB) graphm_bin
 $(SHLIB): $(OBJECTS)
 graphmatch_rcpp.cpp:  $(GRAPHM_OBJ_REL)
 ./RcppExports.o:  $(GRAPHM_OBJ_REL)
@@ -72,6 +72,9 @@ graphm/./algorithm_umeyama.o:   algorithm_umeyama.cpp algorithm_umeyama.h
 graphm/./algorithm_unif.o:   algorithm_unif.cpp algorithm_unif.h
 		cd graphm && $(CXX) $(PKG_CPPFLAGS) -I"$(LIB_GSL)\include" -c algorithm_unif.cpp  -o ./algorithm_unif.o
 
+graphm_bin:  graphm/bin/graphm
+graphm/bin/graphm:  $(GRAPHM_OBJ_REL)
+	cd graphm &&   $(CXX) $(PKG_CPPFLAGS) -c main.cpp -o bin/graphm
 
 clean: cleanb
 

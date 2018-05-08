@@ -1,4 +1,4 @@
-// # Copyright (C) Sancar Adali 2015-2017
+// # Copyright (C) Sancar Adali 2015-
 
 #include <Rcpp.h>
 #include <RcppGSL.h>

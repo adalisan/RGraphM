@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // run_graph_match
 Rcpp::List run_graph_match(const RcppGSL::Matrix& A, const RcppGSL::Matrix& B, const Rcpp::List& algorithm_params);
-RcppExport SEXP RGraphM_run_graph_match(SEXP ASEXP, SEXP BSEXP, SEXP algorithm_paramsSEXP) {
+RcppExport SEXP _RGraphM_run_graph_match(SEXP ASEXP, SEXP BSEXP, SEXP algorithm_paramsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

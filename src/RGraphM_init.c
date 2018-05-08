@@ -5,10 +5,10 @@
 
 
 /* .Call calls */
-extern SEXP RGraphM_run_graph_match(SEXP, SEXP, SEXP);
+extern SEXP _RGraphM_run_graph_match(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"RGraphM_run_graph_match", (DL_FUNC) &RGraphM_run_graph_match, 3},
+    {"_RGraphM_run_graph_match", (DL_FUNC) &_RGraphM_run_graph_match, 3},
     {NULL, NULL, 0}
 };
 
