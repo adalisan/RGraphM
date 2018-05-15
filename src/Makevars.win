@@ -74,7 +74,7 @@ graphm/./algorithm_unif.o:   algorithm_unif.cpp algorithm_unif.h
 
 graphm_bin:  graphm/bin/graphm
 graphm/bin/graphm:  $(GRAPHM_OBJ_REL)
-	cd graphm &&   $(CXX) $(PKG_CPPFLAGS) -c main.cpp -o bin/graphm
+	cd graphm &&   $(CXX) $(PKG_CPPFLAGS) -I"$(LIB_GSL)\include" main.cpp ./*o $(LDFLAGS) -o ./bin/graphm $(PKG_LIBS)
 
 clean: cleanb
 
