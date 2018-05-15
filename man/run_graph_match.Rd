@@ -49,10 +49,10 @@ algo_fw_xeps=0.01 ,
 algo_fw_feps=0.01 ,
 # 0 - just add a set of isolated nodes to the smallest graph
 # 1 - double size
-dummy_nodes=0,
+dummy_nodes=as.integer(0),
 # fill for dummy nodes (0.5 - these nodes will be connected with all other
 # by edges of weight 0.5(min_weight+max_weight))
-dummy_nodes_fill=0,
+dummy_nodes_fill=as.integer(0),
 # fill for linear matrix C, usually that's the minimum (dummy_nodes_c_coef=0),
 # but may be the maximum (dummy_nodes_c_coef=1)
 dummy_nodes_c_coef=0.01,
@@ -62,8 +62,8 @@ qcvqcc_lambda_min=1E-5,
 
 
 # 0 - all matching are possible, 1-only matching with positive local similarity are possible
-blast_match=1 ,
-blast_match_proj=0 ,
+blast_match=as.integer(1) ,
+blast_match_proj=as.integer(0) ,
 
 
 #****************OUTPUT***************************************
@@ -71,12 +71,12 @@ blast_match_proj=0 ,
 exp_out_file="exp_out_file" ,
 exp_out_format="Parameters Compact Permutation",
 #other
-debugprint=1 ,
+debugprint=as.integer(1) ,
 debugprint_file="debug.txt",
-verbose_mode=1 ,
+verbose_mode=as.integer(1) ,
 # verbose file may be a file or just a screen:cout
 verbose_file="verbose_debug.txt",
-graph_dot_print = 1
+graph_dot_print = as.integer(1)
 )
 print( algorithm_params)
 print ("Dimensions of A")

@@ -46,23 +46,97 @@
 # //verbose file may be a file or just a screen:cout
 # verbose_file=cout s
 
+test_algo_pars<-list(
+  # Already provided as A and B matrices
+  # *******************ALGORITHMS********************************
+  # used algorithms and what should be used as
+  #initial solution in corresponding algorithms
+  algo="I QCV PATH",
+  algo_init_sol="unif unif unif",
+  solution_file="solution_im.txt",
+  # coeficient of linear combination between
+  # (1-alpha_ldh)*||graph_1-P*graph_2*P^T||^2_F +alpha_ldh*C_matrix
+  alpha_ldh=0 ,
+  cdesc_matrix="A" ,
+  cscore_matrix="A" ,
+  C_matrix = "none",
+  # **************PARAMETERS SECTION*****************************
+  hungarian_max=10000 ,
+  algo_fw_xeps=0.01 ,
+  algo_fw_feps=0.01 ,
+  # 0 - just add a set of isolated nodes to the smallest graph
+  # 1 - double size
+  dummy_nodes=as.integer(0),
+  # fill for dummy nodes (0.5 - these nodes will be connected with all other
+  # by edges of weight 0.5(min_weight+max_weight))
+  dummy_nodes_fill=as.integer(0),
+  # fill for linear matrix C, usually that's the minimum (dummy_nodes_c_coef=0),
+  # but may be the maximum (dummy_nodes_c_coef=1)
+  dummy_nodes_c_coef=0.01,
+  
+  qcvqcc_lambda_M=10,
+  qcvqcc_lambda_min=1E-5,
+  
+  
+  # 0 - all matching are possible, 1-only matching with positive local similarity are possible
+  blast_match=as.integer(1) ,
+  blast_match_proj=as.integer(0) ,
+  
+  
+  
+  #****************OUTPUT***************************************
+  #output file and its format
+  exp_out_file="exp_out_file" ,
+  exp_out_format="Parameters Compact Permutation",
+  #other
+  debugprint=as.integer(1) ,
+  debugprint_file="debug.txt",
+  verbose_mode=as.integer(1) ,
+  # verbose file may be a file or just a screen:cout
+  verbose_file="verbose_debug.txt",
+  graph_dot_print = as.integer(1)
+)
+
 
 test_graph_match <- function(A,B,algorithm_params) {
   writeMat(A,"./src/graphm/Rpkgtest/testA")
   writeMat(B,"./src/graphm/Rpkgtest/testB")
   write_config("./src/graphm/Rpkgtest/config.txt",A,B,algorithm_params)
-  system("./src/graphm/bin/graphm config.txt")
+  system("./src/graphm/bin/graphm.exe ./src/graphm/Rpkgtest/config.txt",show.output.on.console = T)
 }
 
 writeMat <- function (A,filepath) {
   
-  writeLines(A,filepath)
+  write.table(A,file = filepath,row.names= F, col.names=F)
 }
 write_config <- function  (filepath,A,B,algo_params){
-  writeLines("graph_1=./src/graphm/Rpkgtest/testA",filepath)
-  writeLines("graph_2=./src/graphm/Rpkgtest/testB",filepath)
-  for ( par in algo_params) {
-    writeLines(names(par),'=', par ," " ,"s" ,filepath)
+  new_f = file(filepath,open = 'wt')
+  #open(new_f)
+  writeLines(text= "graph_1=./src/graphm/Rpkgtest/testA s",new_f)
+  writeLines(text= "graph_2=./src/graphm/Rpkgtest/testB s",new_f)
+  close(new_f)
+  for ( par_name in names(algo_params)) {
+    par  = algo_params[[par_name]]
+    print (par)
+    if (is.numeric(par)) {
+      if (is.double(par)) {
+      type = 'd'
+      }
+      else if  (is.integer(par)) {
+        type = 'i'
+      }
+    } else if (is.character(par)){
+      if (nchar(par)==0) {
+        print ("invalid parameter value for " + names(par))
+      }
+      if (nchar(par)==1) {
+      type = 'c'
+      } else {
+        type = 's'
+      }
+      
+    }
+    write(paste0(par_name,'=', par ," " ,type ,collapse = ""),file = filepath, append = TRUE)
     
   }
   
