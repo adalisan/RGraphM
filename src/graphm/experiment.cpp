@@ -220,12 +220,17 @@ void experiment::synchronize(graph& g, graph& h, gsl_matrix** pgm_ldh)
     case 1://double the matrix size
         iadd_r=h.get_adjmatrix()->size1;
         iadd_c=g.get_adjmatrix()->size1;
+        
         break;
     };
+    
+    *gout<< "adding dummy nodes" <<std::endl; 
+    *gout<< "dimension   increases" << iadd_c << "  " << iadd_r <<std::endl;
     h.add_dummy_nodes(iadd_c);
     g.add_dummy_nodes(iadd_r);
-
+    *gout<< "updated graphs by adding dummy nodes"<< h.get_adjmatrix()->size1 << g.get_adjmatrix()->size1  << std::endl;
     if (pgm_ldh!=NULL) {
+        *gout<< "updating C matrix   size "  << std::endl;
         gsl_matrix* gm_C_new=gsl_matrix_alloc((*pgm_ldh)->size1+iadd_r,(*pgm_ldh)->size2+iadd_c);
         gsl_matrix_view gmv_C_new=gsl_matrix_submatrix(gm_C_new,0,0,(*pgm_ldh)->size1,(*pgm_ldh)->size2);
         double dmin_C_blast=gsl_matrix_min((*pgm_ldh));
